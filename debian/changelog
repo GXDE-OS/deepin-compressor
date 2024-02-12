@@ -1,0 +1,11 @@
+deepin-compressor (6.0.0) unstable; urgency=medium
+
+  * v23 changlog
+
+ -- muyuankai <muyuankai@uniontech.com>  Thu, 05 Jan 2023 10:38:35 +0800
+ 
+deepin-compressor (1.0) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- unknown <zs@zs-PC.com>  Thu, 12 Sep 2019 11:35:48 +0800
