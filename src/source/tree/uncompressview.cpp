@@ -32,17 +32,22 @@
 UnCompressView::UnCompressView(QWidget *parent)
     : DataTreeView(parent)
 {
+    qDebug() << "UnCompressView constructor called";
     initUI();
     initConnections();
+    qDebug() << "UnCompressView initialized";
 }
 
 UnCompressView::~UnCompressView()
 {
+    qDebug() << "UnCompressView destructor called";
     clearDragData();
+    qDebug() << "UnCompressView destroyed";
 }
 
 void UnCompressView::refreshArchiveData()
 {
+    qDebug() << "Refreshing archive data";
     ArchiveData &stArchiveData =  DataManager::get_instance().archiveData();
 
     // 刷新第一层级文件夹子项的数目
@@ -56,9 +61,10 @@ void UnCompressView::refreshArchiveData()
     m_pModel->refreshFileEntry(stArchiveData.listRootEntry);
     m_mapShowEntry["/"] = stArchiveData.listRootEntry;
 
+    qInfo() << "Archive data refreshed successfully";
     // 重置排序
     m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-    sortByColumn(DC_Name);
+    sortByColumn(DC_Name, Qt::AscendingOrder);
     resetLevel();       // 重置目录层级
 }
 
@@ -75,6 +81,7 @@ void UnCompressView::setDefaultUncompressPath(const QString &strPath)
 
 void UnCompressView::mousePressEvent(QMouseEvent *event)
 {
+    qDebug() << "Mouse press event at position:" << event->pos();
     if (event->button() == Qt::MouseButton::LeftButton) {
         m_dragPos = event->pos();
     }
@@ -200,6 +207,7 @@ void UnCompressView::clearDragData()
 
 void UnCompressView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    qDebug() << "Mouse double click event at position:" << event->pos();
     if (event->button() == Qt::MouseButton::LeftButton) {
         handleDoubleClick(indexAt(event->pos()));   // 双击处理
     }
@@ -259,7 +267,7 @@ void UnCompressView::handleDoubleClick(const QModelIndex &index)
             resizeColumnWidth();            // 重置列宽
             // 重置排序
             m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-            sortByColumn(DC_Name);
+            sortByColumn(DC_Name, Qt::AscendingOrder);
 
             m_vPre.push_back(entry.strFileName); // 保存进入的文件夹名
 
@@ -337,7 +345,7 @@ void UnCompressView::refreshDataByCurrentPathChanged()
 
     // 重置排序
     m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-    sortByColumn(DC_Name);
+    sortByColumn(DC_Name, Qt::AscendingOrder);
 
     // 追加时需要选中追加的文件
     if (CT_Add == m_eChangeType) {
@@ -555,6 +563,7 @@ QList<FileEntry> UnCompressView::getSelEntry()
 
 void UnCompressView::extract2Path(const QString &strPath)
 {
+    qDebug() << "Extracting files to path:" << strPath;
     QList<FileEntry> listSelEntry = getSelEntry();    // 待提取的文件数据
     ExtractionOptions stOptions;    // 提取参数
     stOptions.strTargetPath = strPath;
@@ -570,6 +579,8 @@ void UnCompressView::extract2Path(const QString &strPath)
         }
     }
 
+    qInfo() << "Extraction prepared, files count:" << listSelEntry.size()
+            << ", total size:" << stOptions.qSize << "bytes";
     // 发送提取信号
     emit signalExtract2Path(listSelEntry, stOptions);
 }
@@ -618,13 +629,18 @@ void UnCompressView::slotShowRightMenu(const QPoint &pos)
         if(selectionModel()->selectedRows().count() != 1 || !m_bModifiable) {
             renameAct->setEnabled(false);
         }
+        if(m_mapOrderJson.contains(ORDER_RENAME)) {
+            renameAct->setEnabled(m_mapOrderJson.value(ORDER_RENAME).toBool());
+        }
         // 右键-删除
         QAction *pAction = menu.addAction(tr("Delete"), this, &UnCompressView::slotDeleteFile);
 
         if (!m_bModifiable) {
             pAction->setEnabled(false); // 若压缩包数据不能更改，深处按钮设置成不可用
         }
-
+        if(m_mapOrderJson.contains(ORDER_DELETE)) {
+            pAction->setEnabled(m_mapOrderJson.value(ORDER_DELETE).toBool());
+        }
         // 右键-打开方式
         DMenu openMenu(tr("Open with"), this);
         menu.addMenu(&openMenu);
@@ -690,6 +706,12 @@ void UnCompressView::slotExtract2Here()
 
 void UnCompressView::slotDeleteFile()
 {
+    qDebug() << "Delete file operation initiated";
+    QVariantMap mapdata = mapOrderJson();
+    if(mapdata.contains(ORDER_DELETE)) {
+        if(!mapdata.value(ORDER_DELETE).toBool()) return;
+    }
+
     if (m_bModifiable) { // 压缩包数据是否可更改
         // 询问删除对话框
         SimpleQueryDialog dialog(this);
@@ -709,6 +731,7 @@ void UnCompressView::slotDeleteFile()
                 }
             }
 
+            qInfo() << "Deleting" << listSelEntry.size() << "files, total size:" << qSize << "bytes";
             // 发送删除信号
             m_eChangeType = CT_Delete;
             emit signalDelFiles(listSelEntry, qSize);
@@ -819,7 +842,7 @@ void UnCompressView::slotPreClicked()
 
     // 重置排序
     m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-    sortByColumn(DC_Name);
+    sortByColumn(DC_Name, Qt::AscendingOrder);
 
     //自动选中第一行
     QModelIndex tmpindex = m_pModel->getListEntryIndex(m_vPre.back()); // 获取上层文件夹对应的QModelIndex

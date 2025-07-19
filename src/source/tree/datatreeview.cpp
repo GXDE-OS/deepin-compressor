@@ -10,7 +10,7 @@
 
 #include <DApplication>
 #include <DStyle>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -19,6 +19,9 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QPainterPath>
+#include <QJsonParseError>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 StyleTreeViewDelegate::StyleTreeViewDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
@@ -35,11 +38,12 @@ QSize StyleTreeViewDelegate::sizeHint(const QStyleOptionViewItem &option, const 
 {
     Q_UNUSED(index);
 
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    if (DGuiApplicationHelper::instance()->sizeMode() == DGuiApplicationHelper::NormalMode) {
-        return QSize(option.rect.width(), TABLE_HEIGHT_NormalMode);
-    } else {
+    if (DGuiApplicationHelper::instance()->isCompactMode()) {
         return QSize(option.rect.width(), TABLE_HEIGHT_CompactMode);
+    } else {
+        return QSize(option.rect.width(), TABLE_HEIGHT_NormalMode);
     }
 #else
     return QSize(option.rect.width(), TABLE_HEIGHT_NormalMode);
@@ -75,7 +79,7 @@ void StyleTreeViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
     int margin = style->pixelMetric(DStyle::PM_ContentsMargins, &option);
     //设置高亮文字色
-    DApplicationHelper *dAppHelper = DApplicationHelper::instance();
+    DGuiApplicationHelper *dAppHelper = DGuiApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
     QPen forground;
     forground.setColor(palette.color(cg, DPalette::Text));
@@ -143,12 +147,15 @@ void StyleTreeViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 DataTreeView::DataTreeView(QWidget *parent)
     : DTreeView(parent)
 {
+    qDebug() << "DataTreeView constructor called";
     initUI();
     initConnections();
+    qDebug() << "DataTreeView initialized";
 }
 
 DataTreeView::~DataTreeView()
 {
+    qDebug() << "DataTreeView destructor called";
 
 }
 
@@ -161,6 +168,7 @@ void DataTreeView::resetLevel()
 
 void DataTreeView::initUI()
 {
+    qDebug() << "Initializing DataTreeView UI";
     setAttribute(Qt::WA_AcceptTouchEvents); // 设置接收触摸屏事件
     setObjectName("TableViewFile");
     setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -197,6 +205,7 @@ void DataTreeView::initConnections()
 
 void DataTreeView::resizeColumnWidth()
 {
+    qDebug() << "Resizing columns to width:" << width();
     setColumnWidth(0, width() * 25 / 58);
     setColumnWidth(1, width() * 17 / 58);
     setColumnWidth(2, width() * 8 / 58);
@@ -206,6 +215,22 @@ void DataTreeView::resizeColumnWidth()
 TreeHeaderView *DataTreeView::getHeaderView() const
 {
     return m_pHeaderView;
+}
+
+
+void DataTreeView::setMapOrderJson(const QString &sJson)
+{
+    QJsonParseError error;
+    QJsonObject metaData = QJsonDocument::fromJson(sJson.toLower().toLocal8Bit().data(), &error).object();
+    QVariantMap mapdata = metaData.toVariantMap();
+    if(mapdata.contains("permission")) {
+        m_mapOrderJson = mapdata.value("permission").toMap();
+    }
+}
+
+QVariantMap DataTreeView::mapOrderJson()
+{
+    return m_mapOrderJson;
 }
 
 void DataTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
@@ -303,6 +328,7 @@ void DataTreeView::focusInEvent(QFocusEvent *event)
 
 void DataTreeView::dragEnterEvent(QDragEnterEvent *e)
 {
+    qDebug() << "Drag enter event with mime data:" << e->mimeData()->formats();
     const auto *mime = e->mimeData();
 
     // 判断是否有url
@@ -317,13 +343,29 @@ void DataTreeView::dragEnterEvent(QDragEnterEvent *e)
             }
         }
 
-        e->accept();
+        if(m_mapOrderJson.contains(ORDER_EDIT)) {
+            if (m_mapOrderJson.value(ORDER_EDIT).toBool()) {
+                e->accept();
+            } else {
+                e->ignore();
+            }
+        } else {
+            e->accept();
+        }
     }
 }
 
 void DataTreeView::dragMoveEvent(QDragMoveEvent *e)
 {
-    e->accept();
+    if(m_mapOrderJson.contains(ORDER_EDIT)) {
+        if (m_mapOrderJson.value(ORDER_EDIT).toBool()) {
+            e->accept();
+        } else {
+            e->ignore();
+        }
+    } else {
+        e->accept();
+    }
 }
 
 void DataTreeView::dropEvent(QDropEvent *e)
@@ -333,8 +375,15 @@ void DataTreeView::dropEvent(QDropEvent *e)
     if (false == mime->hasUrls()) {
         e->ignore();
     }
-
-    e->accept();
+    if(m_mapOrderJson.contains(ORDER_EDIT)) {
+        if (m_mapOrderJson.value(ORDER_EDIT).toBool()) {
+            e->accept();
+        } else {
+            e->ignore();
+        }
+    } else {
+        e->accept();
+    }
 
     // 判断本地文件
     QStringList fileList;
@@ -355,6 +404,8 @@ void DataTreeView::dropEvent(QDropEvent *e)
 
 void DataTreeView::resizeEvent(QResizeEvent *event)
 {
+    qDebug() << "Resize event, old size:" << event->oldSize()
+             << "new size:" << event->size();
     Q_UNUSED(event)
     resizeColumnWidth();
 }
@@ -366,13 +417,21 @@ bool DataTreeView::event(QEvent *event)
 
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         if (!m_isPressed && touchEvent && touchEvent->device() && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
-
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
+#else
+        if (!m_isPressed && touchEvent && touchEvent->deviceType() == QInputDevice::DeviceType::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
+            QList<QTouchEvent::TouchPoint> points = touchEvent->points();
+#endif
             //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
             if (points.count() == 1) {
                 QTouchEvent::TouchPoint p = points.at(0);
+                #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
                 m_lastTouchBeginPos = p.pos();
+                #else
+                m_lastTouchBeginPos = p.position();
+                #endif
                 m_lastTouchBeginPos.setY(m_lastTouchBeginPos.y() - m_pHeaderView->height());
                 m_lastTouchTime = QTime::currentTime();
                 m_isPressed = true;
@@ -396,6 +455,7 @@ void DataTreeView::mouseReleaseEvent(QMouseEvent *event)
 
 void DataTreeView::mouseMoveEvent(QMouseEvent *event)
 {
+    qDebug() << "Mouse move at position:" << event->pos();
     if (m_isPressed) {
         //最小距离为防误触和双向滑动时,只触发横向或者纵向的
         int touchmindistance = 2;
@@ -427,6 +487,7 @@ void DataTreeView::mouseMoveEvent(QMouseEvent *event)
 
 void DataTreeView::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "Key pressed:" << event->key() << "modifiers:" << event->modifiers();
     // 当前选中表格第一行，再点击Key_Up,选中返回上一层目录
     if (Qt::Key_Up == event->key()) {
         // 当前行为0或为空文件夹时，焦点放在返回上一层目录上

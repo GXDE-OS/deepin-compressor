@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "calculatesizethread.h"
+#include <QDebug>
 
 #include <QElapsedTimer>
 #include <QFileInfo>
@@ -20,6 +21,7 @@ CalculateSizeThread::CalculateSizeThread(const QStringList &listfiles, const QSt
     , m_listAddEntry(listAddEntry)
     , m_stOptions(stOptions)
 {
+    qDebug() << "CalculateSizeThread initialized with" << listfiles.size() << "files to process";
     qRegisterMetaType<QList<FileEntry>>("QList<FileEntry>");
     qRegisterMetaType<CompressOptions>("CompressOptions");
 }
@@ -31,10 +33,12 @@ void CalculateSizeThread::set_thread_stop(bool thread_stop)
 
 void CalculateSizeThread::run()
 {
+    qDebug() << "CalculateSizeThread::run() started";
     QElapsedTimer time1;
     time1.start();
     foreach (QString file, m_files) {
         if (m_thread_stop) {
+            qDebug() << "CalculateSizeThread stopped by request";
             return;
         }
 
@@ -45,10 +49,15 @@ void CalculateSizeThread::run()
         entry.strFileName = fileInfo.fileName();    // 文件名
         entry.isDirectory = fileInfo.isDir();   // 是否是文件夹
         entry.qSize = fileInfo.size();   // 大小
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         entry.uLastModifiedTime = fileInfo.lastModified().toTime_t();   // 最后一次修改时间
+#else
+        entry.uLastModifiedTime = fileInfo.lastModified().toSecsSinceEpoch();   // 最后一次修改时间
+#endif
 
         // 待压缩文件已经不存在
         if (!fileInfo.exists()) {
+            qWarning() << "File not exists:" << fileInfo.absoluteFilePath();
             if (fileInfo.isSymLink()) {
                 emit signalError(tr("The original file of %1 does not exist, please check and try again").arg(fileInfo.absoluteFilePath()), fileInfo.absoluteFilePath());
             } else {
@@ -61,6 +70,7 @@ void CalculateSizeThread::run()
 
         // 待压缩文件不可读
         if (!fileInfo.isReadable()) {
+            qWarning() << "File not readable:" << fileInfo.absoluteFilePath();
             emit signalError(tr("You do not have permission to compress %1").arg(fileInfo.absoluteFilePath()), fileInfo.absoluteFilePath());
 
             set_thread_stop(true);
@@ -76,13 +86,21 @@ void CalculateSizeThread::run()
             mutex.lock();
             m_listAllEntry << entry;
             mutex.unlock();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QtConcurrent::run(this, &CalculateSizeThread::ConstructAddOptionsByThread, file);
+#else
+            QtConcurrent::run([this, file]() {
+                ConstructAddOptionsByThread(file);
+            });
+#endif
+
         }
     }
 
     // 等待线程池结束
     QThreadPool::globalInstance()->waitForDone();
     if (m_thread_stop) {
+        qDebug() << "CalculateSizeThread stopped before completion";
         return;
     }
 
@@ -93,9 +111,12 @@ void CalculateSizeThread::run()
 
 void CalculateSizeThread::ConstructAddOptionsByThread(const QString &path)
 {
+    qDebug() << "Processing directory:" << path;
     QDir dir(path);
-    if (!dir.exists())
+    if (!dir.exists()) {
+        qWarning() << "Directory not exists:" << path;
         return;
+    }
     // 获得文件夹中的文件列表
     QFileInfoList list = dir.entryInfoList(QDir::AllEntries | QDir::System
                                            | QDir::NoDotAndDotDot | QDir::Hidden);
@@ -112,10 +133,15 @@ void CalculateSizeThread::ConstructAddOptionsByThread(const QString &path)
         entry.strFileName = fileInfo.fileName();    // 文件名
         entry.isDirectory = fileInfo.isDir();   // 是否是文件夹
         entry.qSize = fileInfo.size();   // 大小
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         entry.uLastModifiedTime = fileInfo.lastModified().toTime_t();   // 最后一次修改时间
+#else   
+        entry.uLastModifiedTime = fileInfo.lastModified().toSecsSinceEpoch();   // 最后一次修改时间
+#endif
 
         // 待压缩文件已经不存在
         if (!fileInfo.exists()) {
+            qWarning() << "File not exists in directory:" << fileInfo.absoluteFilePath();
             if (fileInfo.isSymLink()) {
                 qInfo() << "*********" << fileInfo.filePath();
                 emit signalError(tr("The original file of %1 does not exist, please check and try again").arg(fileInfo.absoluteFilePath()), fileInfo.absoluteFilePath());
@@ -129,6 +155,7 @@ void CalculateSizeThread::ConstructAddOptionsByThread(const QString &path)
 
         // 待压缩文件不可读
         if (!fileInfo.isReadable()) {
+            qWarning() << "File not readable in directory:" << fileInfo.absoluteFilePath();
             emit signalError(tr("You do not have permission to compress %1").arg(fileInfo.absoluteFilePath()), fileInfo.absoluteFilePath());
 
             set_thread_stop(true);
@@ -140,7 +167,13 @@ void CalculateSizeThread::ConstructAddOptionsByThread(const QString &path)
             m_listAllEntry << entry;
             mutex.unlock();
             // 如果是文件夹 则将此文件夹放入线程池中进行计算
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QtConcurrent::run(this, &CalculateSizeThread::ConstructAddOptionsByThread, entry.strFullPath);
+#else
+            QtConcurrent::run([this, entry]() {
+                ConstructAddOptionsByThread(entry.strFullPath);
+            });
+#endif
         } else {
             mutex.lock();
             // 如果是文件则直接计算大小

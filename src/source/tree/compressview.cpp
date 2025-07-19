@@ -27,17 +27,21 @@
 CompressView::CompressView(QWidget *parent)
     : DataTreeView(parent)
 {
+    qDebug() << "CompressView constructor called";
     initUI();           // 初始化参数等
     initConnections();  // 初始化信号槽
+    qDebug() << "CompressView initialized";
 }
 
 CompressView::~CompressView()
 {
+    qDebug() << "CompressView destructor called";
 
 }
 
 void CompressView::addCompressFiles(const QStringList &listFiles)
 {
+    qDebug() << "Adding compress files:" << listFiles;
     Overwrite_Result mode = OR_Cancel;
     bool applyAll = false;
 
@@ -74,6 +78,7 @@ void CompressView::addCompressFiles(const QStringList &listFiles)
 
 QStringList CompressView::getCompressFiles()
 {
+    qDebug() << "Getting compress files, count:" << m_listCompressFiles.size();
     return m_listCompressFiles;
 }
 
@@ -84,6 +89,7 @@ QList<FileEntry> CompressView::getEntrys()
 
 void CompressView::refreshCompressedFiles(bool bChanged, const QString &strFileName)
 {
+    qDebug() << "Refreshing compressed files, changed:" << bChanged << "file:" << strFileName;
     m_listEntry.clear();
 
     // 对变化的文件进行监控
@@ -103,7 +109,7 @@ void CompressView::refreshCompressedFiles(bool bChanged, const QString &strFileN
 
     // 重置排序
     m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-    sortByColumn(DC_Name);
+    sortByColumn(DC_Name, Qt::AscendingOrder);
     resetLevel();   // 重置目录层级
 
     // 选中新加的文件
@@ -123,6 +129,7 @@ void CompressView::refreshCompressedFiles(bool bChanged, const QString &strFileN
 
 void CompressView::clear()
 {
+    qDebug() << "Clearing compress view data";
     // 重置数据
     m_pFileWatcher->removePath(m_strCurrentPath);       // 删除目录监听
     m_listCompressFiles.clear();
@@ -167,7 +174,11 @@ FileEntry CompressView::fileInfo2Entry(const QFileInfo &fileInfo)
         entry.qSize = fileInfo.size();
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     entry.uLastModifiedTime = fileInfo.lastModified().toTime_t();   // 最后一次修改时间
+#else
+    entry.uLastModifiedTime = fileInfo.lastModified().toSecsSinceEpoch();   // 最后一次修改时间
+#endif
 
     return entry;
 }
@@ -188,7 +199,7 @@ void CompressView::handleDoubleClick(const QModelIndex &index)
             resizeColumnWidth();        // 重置列宽
             // 重置排序
             m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-            sortByColumn(DC_Name);
+            sortByColumn(DC_Name, Qt::AscendingOrder);
 
             m_vPre.push_back(entry.strFileName);
             // 空目录自动选中返回上一级目录Label bug122305
@@ -336,6 +347,7 @@ void CompressView::slotShowRightMenu(const QPoint &pos)
 
 void CompressView::slotDeleteFile()
 {
+    qDebug() << "Deleting selected files";
     QModelIndexList selectedIndex = selectionModel()->selectedRows(0);    // 获取所有待删除的第一行index
 
     if (0 == m_iLevel) { // 如果是根目录，删除缓存文件名
@@ -380,6 +392,7 @@ void CompressView::slotDeleteFile()
 
 void CompressView::slotRenameFile()
 {
+    qDebug() << "Renaming selected file";
     QList<FileEntry> listSelEntry;
 
     QModelIndexList listModelIndex = selectionModel()->selectedRows();
@@ -463,12 +476,14 @@ void CompressView::slotRenameFile()
 
 void CompressView::slotDirChanged()
 {
+    qDebug() << "Directory changed, refreshing view";
     // 刷新显示数据
     m_pModel->refreshFileEntry(getCurrentDirFiles());
 }
 
 void CompressView::slotDragFiles(const QStringList &listFiles)
 {
+    qDebug() << "Handling drag files:" << listFiles;
     // 在压缩列表添加一个压缩文件
     if (listFiles.count() == 1 && UiTools::isArchiveFile(listFiles.at(0)) && m_listCompressFiles.count() > 0) {
         SimpleQueryDialog dialog;  // 询问添加压缩文件到压缩目录或者在新窗口打开压缩文件
@@ -532,7 +547,7 @@ void CompressView::slotPreClicked()
     handleLevelChanged();
     // 重置排序
     m_pHeaderView->setSortIndicator(-1, Qt::SortOrder::AscendingOrder);
-    sortByColumn(DC_Name);
+    sortByColumn(DC_Name, Qt::AscendingOrder);
 
     //自动选中第一行
     QModelIndex tmpindex = m_pModel->getListEntryIndex(m_vPre.back()); // 获取上层文件夹对应的QModelIndex

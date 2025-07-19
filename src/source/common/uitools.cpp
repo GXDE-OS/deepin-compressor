@@ -8,6 +8,7 @@
 #include "kpluginfactory.h"
 #include "kpluginloader.h"
 #include "pluginmanager.h"
+#include "qtcompat.h"
 
 #include <DStandardPaths>
 
@@ -124,6 +125,7 @@ QString UiTools::humanReadableSize(const qint64 &size, int precision)
 
 bool UiTools::isArchiveFile(const QString &strFileName)
 {
+    qDebug() << "Checking if file is archive:" << strFileName;
     QString strTransFileName = strFileName;
     UnCompressParameter::SplitType type;
     UiTools::transSplitFileName(strTransFileName, type);
@@ -138,25 +140,30 @@ bool UiTools::isArchiveFile(const QString &strFileName)
     if (mime.size() > 0) {
         bool bArchive = false;
         ret = isExistMimeType(mime, bArchive); // 判断是否是归档管理器支持的压缩文件格式
+        qDebug() << "MIME type check result:" << mime << "is" << (ret ? "supported" : "not supported");
     } else {
+        qDebug() << "No valid MIME type found";
         ret = false;
     }
 
     if (strTransFileName.endsWith(".deb")) {    // 对deb文件识别为普通文件
+        qDebug() << "DEB file detected, treating as non-archive";
         ret = false;
     }
 
     if (strTransFileName.endsWith(".crx") || strTransFileName.endsWith(".apk")) {    // 对crx、apk文件识别为压缩包
+        qDebug() << "CRX/APK file detected, treating as archive";
         ret = true;
     }
 
+    qDebug() << "Final archive check result:" << ret;
     return ret;
 }
 
 bool UiTools::isExistMimeType(const QString &strMimeType, bool &bArchive)
 {
     QString conf = readConf();
-    QStringList confList = conf.split("\n", QString::SkipEmptyParts);
+    QStringList confList = conf.split("\n", SKIP_EMPTY_PARTS);
 
     bool exist = false;
     for (int i = 0; i < confList.count(); i++) {
@@ -219,32 +226,21 @@ QString UiTools::toShortString(QString strSrc, int limitCounts, int left)
 
 ReadOnlyArchiveInterface *UiTools::createInterface(const QString &fileName, bool bWrite, AssignPluginType eType/*, bool bUseLibArchive*/)
 {
-//    QFileInfo fileinfo(fileName); // 未使用该变量
-
+    qDebug() << "Creating interface for file:" << fileName << "write mode:" << bWrite << "plugin type:" << eType;
     const CustomMimeType mimeType = determineMimeType(fileName);
+    qDebug() << "Determined MIME type:" << mimeType.name();
 
     QVector<Plugin *> offers;
     if (bWrite) {
         offers = PluginManager::get_instance().preferredWritePluginsFor(mimeType);
-
-//        if (bUseLibArchive == true && mimeType.name() == "application/zip") {
-//            std::sort(offers.begin(), offers.end(), [](Plugin * p1, Plugin * p2) {
-//                if (p1->metaData().name().contains("Libarchive")) {
-//                    return true;
-//                }
-//                if (p2->metaData().name().contains("Libarchive")) {
-//                    return false;
-//                }
-
-//                return p1->priority() > p2->priority();
-//            });
-//        }
+        qDebug() << "Found" << offers.size() << "write plugins for MIME type";
     } else {
         offers = PluginManager::get_instance().preferredPluginsFor(mimeType);
+        qDebug() << "Found" << offers.size() << "read plugins for MIME type";
     }
 
     if (offers.isEmpty()) {
-        qInfo() << "Could not find a plugin to handle" << fileName;
+        qWarning() << "Could not find a plugin to handle" << fileName;
         return nullptr;
     }
 
@@ -333,10 +329,15 @@ void UiTools::transSplitFileName(QString &fileName, UnCompressParameter::SplitTy
 {
     if (fileName.contains(".7z.")) {
         // 7z分卷处理
-        QRegExp reg("^([\\s\\S]*\\.)7z\\.[0-9]{3}$"); // QRegExp reg("[*.]part\\d+.rar$"); //rar分卷不匹配
-
+        REG_EXP reg("^([\\s\\S]*\\.)7z\\.[0-9]{3}$"); // QRegExp reg("[*.]part\\d+.rar$"); //rar分卷不匹配
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         if (reg.exactMatch(fileName)) {
             fileName = reg.cap(1) + "7z.001"; //例如: *.7z.003 -> *.7z.001
+#else
+        QRegularExpressionMatch match = reg.match(fileName);
+        if (match.hasMatch()) {
+            fileName = match.captured(1) + "7z.001"; //例如: *.7z.003 -> *.7z.001
+#endif
             eSplitType = UnCompressParameter::ST_Other;
         }
     } else if (fileName.contains(".part") && fileName.endsWith(".rar")) {
@@ -352,7 +353,8 @@ void UiTools::transSplitFileName(QString &fileName, UnCompressParameter::SplitTy
 
         eSplitType = UnCompressParameter::ST_Other;
     } else if (fileName.contains(".zip.")) { // 1.zip.001格式
-        QRegExp reg("^([\\s\\S]*\\.)zip\\.[0-9]{3}$");
+        REG_EXP reg("^([\\s\\S]*\\.)zip\\.[0-9]{3}$");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         if (reg.exactMatch(fileName)) {
             QFileInfo fi(reg.cap(1) + "zip.001");
             if (fi.exists() == true) {
@@ -360,6 +362,16 @@ void UiTools::transSplitFileName(QString &fileName, UnCompressParameter::SplitTy
                 eSplitType = UnCompressParameter::ST_Zip;
             }
         }
+#else
+        QRegularExpressionMatch match = reg.match(fileName);
+        if (match.hasMatch()) {
+            QFileInfo fi(match.captured(1) + "zip.001");
+            if (fi.exists() == true) {
+                fileName = match.captured(1) + "zip.001";
+                eSplitType = UnCompressParameter::ST_Zip;
+            }
+        }
+#endif
     } else if (fileName.endsWith(".zip")) { //1.zip 1.01格式
         /**
          * 例如123.zip文件，检测123.z01文件是否存在
@@ -374,9 +386,15 @@ void UiTools::transSplitFileName(QString &fileName, UnCompressParameter::SplitTy
          * 例如123.z01文件，检测123.zip文件是否存在
          * 如果存在，则认定123.z01是分卷包
          */
-        QRegExp reg("^([\\s\\S]*\\.)z[0-9]+$"); //
+        REG_EXP reg("^([\\s\\S]*\\.)z[0-9]+$"); //
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         if (reg.exactMatch(fileName)) {
             fileName = reg.cap(1) + "zip";
+#else
+        QRegularExpressionMatch match = reg.match(fileName);
+        if (match.hasMatch()) {
+            fileName = match.captured(1) + "zip";
+#endif
             QFileInfo fi(fileName);
             if (fi.exists()) {
                 eSplitType = UnCompressParameter::ST_Zip;
@@ -414,7 +432,8 @@ QString UiTools::handleFileName(const QString &strFileName)
 bool UiTools::isLocalDeviceFile(const QString &strFileName)
 {
     QStorageInfo info(strFileName);
-    return info.device().startsWith("/dev/");
+    QString sDevice = info.device();
+    return sDevice.startsWith("/dev/") || sDevice.startsWith("dlnfs"); //长文件名开启后以dlnfs方式挂载
 }
 
 QStringList UiTools::removeSameFileName(const QStringList &listFiles)

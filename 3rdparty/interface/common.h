@@ -1,4 +1,3 @@
-// Copyright (C) 2019 ~ 2020 Uniontech Software Technology Co.,Ltd.
 // SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -8,6 +7,7 @@
 
 #include <QString>
 #include <QLocale>
+#include <QTextCodec>
 #include <libmount/libmount.h>
 
 //文件大小10M
@@ -31,7 +31,7 @@ public:
 
 public:
     static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
-    QString trans2uft8(const char *str, QByteArray &strCode);
+    QString  trans2uft8(const char *str, QByteArray &strCode);
     QByteArray detectEncode(const QByteArray &data, const QString &fileName = QString());
     int ChartDet_DetectingTextCoding(const char *str, QString &encoding, float &confidence);
     QByteArray textCodecDetect(const QByteArray &data, const QString &fileName);
@@ -46,5 +46,12 @@ private:
     //通过mount对应方法判断文件系统是否支持长文件
     bool findDlnfsPath(const QString &target, Compare func);
 };
+
+/**
+ * 判断文件夹或文件夹是否是由mtp挂载的：
+ * /run/user/$UID/gvfs/mtp:xxxxxxxxx/xxx
+ * /root/.gvfs/mtp:xxxxxxxxx/xxx
+*/
+bool IsMtpFileOrDirectory(QString path) noexcept;
 
 #endif

@@ -14,7 +14,8 @@
 #include <DApplication>
 #include <DFileDialog>
 #include <DFontSizeManager>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QStandardPaths>
 #include <QFocusEvent>
@@ -27,6 +28,11 @@
 #include <QDebug>
 
 #include <cmath>
+#include <QProcess>
+#ifdef DTKCORE_CLASS_DConfigFile
+#include <DConfig>
+DCORE_USE_NAMESPACE
+#endif
 
 #define SCROLL_MAX 621
 #define SCROLL_MIN 348
@@ -82,19 +88,24 @@ void TypeLabel::focusOutEvent(QFocusEvent *event)
 CompressSettingPage::CompressSettingPage(QWidget *parent)
     : DWidget(parent)
 {
+    qDebug() << "CompressSettingPage constructor called";
+    initConfig();
     initUI();
     initConnections();
     slotAdvancedEnabled(m_pAdvancedBtn->isChecked());
+    qDebug() << "CompressSettingPage initialization completed";
 }
 
 CompressSettingPage::~CompressSettingPage()
 {
-
+    qDebug() << "CompressSettingPage destructor called";
 }
 
 void CompressSettingPage::setFileSize(const QStringList &listFiles, qint64 qSize)
 {
+    qDebug() << "Setting file size, file count:" << listFiles.count() << "total size:" << qSize;
     if (listFiles.count() == 0) {
+        qWarning() << "Empty file list provided";
         return;
     }
 
@@ -133,25 +144,21 @@ void CompressSettingPage::setFileSize(const QStringList &listFiles, qint64 qSize
 
 void CompressSettingPage::refreshMenu()
 {
+    qDebug() << "Refreshing compression type menu";
     m_pTypeMenu->clear();
     if (m_listSupportedMimeTypes.empty()) {
+        qInfo() << "Loading supported mime types from plugin manager";
         m_listSupportedMimeTypes = PluginManager::get_instance().supportedWriteMimeTypes(PluginManager::SortByComment);     // 获取支持的压缩格式
     }
 
     QAction *pAction = nullptr;
     bool bHas7z = false;
     for (const QString &type : qAsConst(m_listSupportedMimeTypes)) {
-        QMimeType mType = QMimeDatabase().mimeTypeForName(type);
-        // QStringList suffixLst = mType.globPatterns(); 支持的后缀名
-        QString suffix = mType.preferredSuffix();
-        if(type.contains("x-7z-compressed")) {
-            suffix = "7z";
-        }
-        if (suffix == "7z") {
+        if (QMimeDatabase().mimeTypeForName(type).preferredSuffix() == "7z") {
             bHas7z = true;
         }
 
-        pAction = new QAction(suffix, m_pTypeMenu);
+        pAction = new QAction(QMimeDatabase().mimeTypeForName(type).preferredSuffix(), m_pTypeMenu);
         pAction->setData(type);
         m_pTypeMenu->addAction(pAction);
 
@@ -166,6 +173,21 @@ void CompressSettingPage::refreshMenu()
             m_pTypeMenu->addAction("tar.7z");
         }
     }
+#ifdef DTKCORE_CLASS_DConfigFile
+    if(m_isOrderMode) {
+        DConfig *dconfig = (DConfig *)m_dconfig;
+        int nCompType = -1;
+        if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialCompressorType")){
+                    nCompType = dconfig->value("specialCompressorType").toInt();
+                }
+        QList<QAction*> lstAct = m_pTypeMenu->actions();
+        if(nCompType >= 0 && nCompType < lstAct.count()) {
+            slotTypeChanged(lstAct.at(nCompType));
+            return;
+        }
+    }
+#endif
+
 
     // 默认选择类型为zip
     if (pAction != nullptr) {
@@ -189,6 +211,11 @@ void CompressSettingPage::initUI()
     DStyle style;   // 设置菜单箭头
     QPixmap pixmap = style.standardIcon(DStyle::StandardPixmap::SP_ReduceElement).pixmap(QSize(10, 10));
     pArrowPixmapLbl->setPixmap(pixmap);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [=]() {
+        DStyle style;   // 设置菜单箭头
+        QPixmap pixmap = style.standardIcon(DStyle::StandardPixmap::SP_ReduceElement).pixmap(QSize(10, 10));
+        pArrowPixmapLbl->setPixmap(pixmap);
+    });
 
     DFontSizeManager::instance()->bind(m_pCompressTypeLbl, DFontSizeManager::T5, QFont::DemiBold);
 
@@ -367,7 +394,7 @@ void CompressSettingPage::initConnections()
     connect(m_pPasswordEdt, &DPasswordEdit::echoModeChanged, this, &CompressSettingPage::slotEchoModeChanged);
     connect(m_pPasswordEdt, &DPasswordEdit::textEdited, this, &CompressSettingPage::slotPasswordChanged);
     connect(m_pCommentEdt, &DTextEdit::textChanged, this, &CompressSettingPage::slotCommentTextChanged);
-    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this, &CompressSettingPage::slotRefreshFileNameEdit);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &CompressSettingPage::slotRefreshFileNameEdit);
 }
 
 void CompressSettingPage::setTypeImage(const QString &strType)
@@ -445,6 +472,90 @@ void CompressSettingPage::setSplitEnabled(bool bEnabled)
 
 void CompressSettingPage::refreshCompressLevel(const QString &strType)
 {
+#ifdef DTKCORE_CLASS_DConfigFile
+    if(m_isOrderMode) {
+        // 其余格式支持设置压缩方式
+        // 设置压缩方式可用
+        m_pCompressLevelCmb->setEnabled(true);
+        m_pCompressLevelLbl->setEnabled(true);
+        if(!m_dconfig) return;
+        DConfig *dconfig = (DConfig *)m_dconfig;
+        if(strType == "7z") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("special7zCompressor")){
+                        int nMethod = dconfig->value("special7zCompressor").toInt();
+                        m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                    }
+        } else if(strType == "jar") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialJarCompressor")){
+                        int nMethod = dconfig->value("specialJarCompressor").toInt();
+                        m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                    }
+        } else if(strType == "tar") {
+            // tar只有存储功能
+            m_pCompressLevelCmb->setCurrentIndex(0);
+            // 设置压缩方式不可用
+            m_pCompressLevelCmb->setEnabled(false);
+            m_pCompressLevelLbl->setEnabled(false);
+        } else if(strType == "tar.bz2") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarbz2Compressor")){
+                        int nMethod = dconfig->value("specialTarbz2Compressor").toInt();
+                        m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                    }
+        } else if(strType == "tar.gz") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarGzCompressor")){
+                        int nMethod = dconfig->value("specialTarGzCompressor").toInt();
+                        m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                    }
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialCpuTarGzCompressor")){
+                        int nCpu = dconfig->value("specialCpuTarGzCompressor").toInt();
+                        m_pCpuCmb->setCurrentIndex(nCpu);
+                    }
+        } else if(strType == "tar.gz") {
+             if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarGzCompressor")){
+                       int nMethod = dconfig->value("specialTarGzCompressor").toInt();
+                       m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                    }
+        } else if(strType == "tar.lz") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarLzCompressor")){
+                      int nMethod = dconfig->value("specialTarLzCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       } else if(strType == "tar.lzma") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarLzmaCompressor")){
+                      int nMethod = dconfig->value("specialTarLzmaCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       } else if(strType == "tar.lzo") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarLzoCompressor")){
+                      int nMethod = dconfig->value("specialTarLzoCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       } else if(strType == "tar.xz") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTarXzCompressor")){
+                      int nMethod = dconfig->value("specialTarXzCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       } else if(strType == "tar.Z") {
+            // tar.Z无压缩方式，使用默认，即标准
+            m_pCompressLevelCmb->setCurrentIndex(3);
+            // 设置压缩方式不可用
+            m_pCompressLevelCmb->setEnabled(false);
+            m_pCompressLevelLbl->setEnabled(false);
+       } else if(strType == "tar.7z") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialTar7zCompressor")){
+                      int nMethod = dconfig->value("specialTar7zCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       } else if(strType == "zip") {
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialZipCompressor")){
+                      int nMethod = dconfig->value("specialZipCompressor").toInt();
+                      m_pCompressLevelCmb->setCurrentIndex(nMethod);
+                   }
+       }
+       return;
+   }
+#endif
+
     if (0 == strType.compare("tar")) {
         // tar只有存储功能
         m_pCompressLevelCmb->setCurrentIndex(0);
@@ -582,6 +693,25 @@ void CompressSettingPage::setDefaultName(const QString &strName)
     qfilename->setFocus();
 }
 
+void CompressSettingPage::initConfig()
+{
+#ifdef DTKCORE_CLASS_DConfigFile
+    QProcess process;
+    process.start("dmidecode");
+    process.waitForStarted();
+    process.waitForFinished();
+    QString result = process.readAll();
+    QStringList lines = result.split('\n');
+    for (const QString &line : lines) {
+        if (line.contains("String 4", Qt::CaseInsensitive)) {
+            m_isOrderMode = line.contains("PGUX", Qt::CaseInsensitive) || line.contains("FXK11", Qt::CaseInsensitive);
+        }
+    }
+    process.close();
+    m_dconfig = DConfig::create("org.deepin.compressor","org.deepin.compressor.method");
+#endif
+}
+
 void CompressSettingPage::slotShowRightMenu(QMouseEvent *e)
 {
     Q_UNUSED(e)
@@ -592,10 +722,13 @@ void CompressSettingPage::slotShowRightMenu(QMouseEvent *e)
 
 void CompressSettingPage::slotTypeChanged(QAction *action)
 {
-    if (nullptr == action)
+    if (nullptr == action) {
+        qWarning() << "Null action in slotTypeChanged";
         return;
+    }
 
     m_strMimeType = action->data().toString();
+    qInfo() << "Compression type changed to:" << action->text() << "mime type:" << m_strMimeType;
 
     QString selectType = action->text();
     setTypeImage(selectType);
@@ -603,6 +736,7 @@ void CompressSettingPage::slotTypeChanged(QAction *action)
 
     m_pCpuLbl->setEnabled(false);
     m_pCpuCmb->setEnabled(false);
+    m_pCpuCmb->setCurrentIndex(0);
 
     if (0 == selectType.compare("tar.7z")) {       // tar.7z支持普通/列表加密，不支持分卷
         setEncryptedEnabled(true);
@@ -628,6 +762,7 @@ void CompressSettingPage::slotTypeChanged(QAction *action)
         if (0 == selectType.compare("tar.gz")) {
             m_pCpuLbl->setEnabled(true);
             m_pCpuCmb->setEnabled(true);
+            m_pCpuCmb->setCurrentIndex(m_pCpuCmb->count() - 1);
         }
     }
 
@@ -636,7 +771,7 @@ void CompressSettingPage::slotTypeChanged(QAction *action)
 
 void CompressSettingPage::slotRefreshFileNameEdit()
 {
-    DPalette plt = DApplicationHelper::instance()->palette(m_pFileNameEdt);
+    DPalette plt = DPaletteHelper::instance()->palette(m_pFileNameEdt);
 
     if (!m_pFileNameEdt->text().isEmpty()) {
         // 检测文件名合法性
@@ -682,12 +817,25 @@ void CompressSettingPage::slotAdvancedEnabled(bool bEnabled)
         m_pCpuCmb->setCurrentIndex(0);
         m_pCommentEdt->clear();
     }
-
-
+    if (m_pCompressTypeLbl->text() == "tar.gz") {
+        m_pCpuCmb->setCurrentIndex(m_pCpuCmb->count() - 1);
+#ifdef DTKCORE_CLASS_DConfigFile
+        if(m_isOrderMode) {
+            DConfig *dconfig = (DConfig *)m_dconfig;
+            if(dconfig && dconfig->isValid() && dconfig->keyList().contains("specialCpuTarGzCompressor")){
+                int nCpu = dconfig->value("specialCpuTarGzCompressor").toInt();
+                m_pCpuCmb->setCurrentIndex(nCpu);
+            }
+        }
+#endif
+    }
 }
 
 void CompressSettingPage::slotSplitEdtEnabled()
 {
+    if(m_pSplitValueEdt->hasFocus() || m_pCommentEdt->hasFocus()) {
+        parentWidget()->setFocus();
+    }
     // 设置分卷输入框是否可用
     m_pSplitValueEdt->setEnabled(m_pSplitCkb->isChecked());
 
@@ -709,20 +857,25 @@ void CompressSettingPage::slotCompressClicked()
     QString strTmpCompresstype = m_pCompressTypeLbl->text();        // 压缩格式
     QString strName = m_pFileNameEdt->text() + "." + strTmpCompresstype;   // 压缩包名称
     PERF_PRINT_BEGIN("POINT-03", "压缩包名：" + strName + " 大小：" + QString::number(m_qFileSize));
-    qInfo() << "点击了压缩按钮";
+    qInfo() << "Compress button clicked, archive:" << strName << "size:" << m_qFileSize << "type:" << strTmpCompresstype;
 
     // 检查源文件中是否包含即将生成的压缩包
     if (m_listFiles.contains(m_pSavePathEdt->text() + QDir::separator() + strName)) {
+        qWarning() << "Archive name conflicts with source file:" << strName;
         showWarningDialog(tr("The name is the same as that of the compressed archive, please use another one"));
         return;
     }
 
     //压缩zip分卷不支持中文密码
-    if (m_pSplitCkb->isChecked()
-            && "zip" == m_pCompressTypeLbl->text()
-            && (!m_pPasswordEdt->text().isEmpty() && m_pPasswordEdt->text().contains(QRegExp("[\\x4e00-\\x9fa5]+")))) {
-        m_pPasswordEdt->showAlertMessage(tr("The password for ZIP volumes cannot be in Chinese"));
-        return;
+    if (m_pSplitCkb->isChecked() && "zip" == m_pCompressTypeLbl->text()) {
+        QString strPassword = m_pPasswordEdt->lineEdit()->text();
+        QRegularExpression chineseRegex("[\\x{4e00}-\\x{9fa5}]+");
+        if (!strPassword.isEmpty() && chineseRegex.match(strPassword).hasMatch()) {
+            qWarning() << "Chinese password not allowed for ZIP volumes";
+            m_pPasswordEdt->showAlertMessage(tr("The password for ZIP volumes cannot be in Chinese"));
+            qWarning() << "Compress options validation failed";
+            return;
+        }
     }
 
     // 检查合法性
@@ -784,12 +937,15 @@ void CompressSettingPage::slotCompressClicked()
     // 检测此压缩包名称是否存在
     QFileInfo fileInfo(compressInfo.strTargetPath + QDir::separator() + compressInfo.strArchiveName);
     if (fileInfo.exists()) {
+        qInfo() << "Archive file already exists:" << fileInfo.filePath();
         SimpleQueryDialog dialog(this);
         int iResult = dialog.showDialog(tr("Another file with the same name already exists, replace it?"), tr("Cancel", "button"), DDialog::ButtonNormal, tr("Replace", "button"), DDialog::ButtonWarning);
         if (1 == iResult) {     // 如果点击替换，先移除本地压缩包
+            qInfo() << "Replacing existing archive file";
             QFile file(fileInfo.filePath());
             file.remove();
         } else {    // 点击关闭或者取消，不操作
+            qInfo() << "User canceled replacing existing file";
             return;
         }
     }
@@ -813,16 +969,17 @@ void CompressSettingPage::slotCommentTextChanged()
 
 void CompressSettingPage::slotPasswordChanged()
 {
-    QRegExp reg("^[\\x00-\\x80\\x4e00-\\x9fa5]+$");
+    QRegularExpression reg("^[\\x00-\\x80\\x{4e00}-\\x{9fa5}]+$");
     QString pwdin = m_pPasswordEdt->lineEdit()->text();
     QString pwdout;
 
-    if (!pwdin.isEmpty() && !reg.exactMatch(pwdin)) {
+    if (!pwdin.isEmpty() && !reg.match(pwdin).hasMatch()) {
         for (int i = 0; i < pwdin.length(); ++i) {
-            if (reg.exactMatch(pwdin.at(i))) {
-                pwdout.push_back(pwdin.at(i));
+            if (reg.match(pwdin.at(i)).hasMatch()) {
+                pwdout.append(pwdin.at(i));
             }
         }
+
         m_pPasswordEdt->setText(pwdout);
         // 仅支持中英文字符及部分符号
         m_pPasswordEdt->showAlertMessage(tr("Only Chinese and English characters and some symbols are supported"));
@@ -863,6 +1020,11 @@ bool CompressSettingPage::eventFilter(QObject *watched, QEvent *event)
         // pass the event on to the parent class
         return DWidget::eventFilter(watched, event);
     }
+}
+
+bool CompressSettingPage::isOrderMode()
+{
+    return m_isOrderMode;
 }
 
 TypeLabel *CompressSettingPage::getClickLbl() const

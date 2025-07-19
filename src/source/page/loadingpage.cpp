@@ -7,38 +7,44 @@
 
 #include <DLabel>
 #include <DFontSizeManager>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QHBoxLayout>
 
 LoadingPage::LoadingPage(QWidget *parent)
     : DWidget(parent)
 {
+    qDebug() << "LoadingPage constructor called";
     initUI();
+    qDebug() << "LoadingPage initialization completed";
 }
 
 LoadingPage::~LoadingPage()
 {
-
+    qDebug() << "LoadingPage destructor called";
 }
 
 void LoadingPage::startLoading()
 {
+    qInfo() << "Starting loading animation";
     m_pSpinner->start();
 }
 
 void LoadingPage::stopLoading()
 {
+    qInfo() << "Stopping loading animation";
     m_pSpinner->stop();
 }
 
 void LoadingPage::setDes(const QString &strDes)
 {
+    qInfo() << "Setting loading description:" << strDes;
     m_pTextLbl->setText(strDes);
 }
 
 void LoadingPage::initUI()
 {
+    qDebug() << "Initializing loading page UI";
     // 初始化加载动画
     m_pSpinner = new DSpinner(this);
     m_pSpinner->setMinimumSize(32, 32);
@@ -48,9 +54,9 @@ void LoadingPage::initUI()
     m_pTextLbl->setMinimumSize(293, 20);
     m_pTextLbl->setText(tr("Loading, please wait..."));
     DFontSizeManager::instance()->bind(m_pTextLbl, DFontSizeManager::T6, QFont::Medium);  // 设置字体
-    DPalette pa = DApplicationHelper::instance()->palette(m_pTextLbl);
+    DPalette pa = DPaletteHelper::instance()->palette(m_pTextLbl);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTitle));   // 设置颜色
-    DApplicationHelper::instance()->setPalette(m_pTextLbl, pa);
+    m_pTextLbl->setPalette(pa);
     m_pTextLbl->setAlignment(Qt::AlignCenter);
 
     // 加载布局

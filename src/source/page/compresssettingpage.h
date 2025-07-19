@@ -83,6 +83,11 @@ public:
      * @return
      */
     bool eventFilter(QObject *watched, QEvent *event) override;
+    /**
+     * @brief 是否定制模式
+     * @return
+     */
+    bool isOrderMode();
 
 private:
     /**
@@ -160,6 +165,11 @@ private:
     int showWarningDialog(const QString &msg, const QString &strToolTip = "");
 
     void setDefaultName(const QString &strName);
+    /**
+     * @brief initConfig 初始化配置
+     * @return
+     */
+    void initConfig();
 
 signals:
     void signalCompressClicked(const QVariant &val);
@@ -253,6 +263,8 @@ private:
     QString m_strMimeType;  // 压缩类型（application/x-tar）
 
     QScrollArea *m_pRightScroll = nullptr;
+    void *m_dconfig = nullptr; //读取dconfig配置
+    bool m_isOrderMode = false;    //是否定制模式存储压缩方式优先
 };
 
 #endif // COMPRESSSETTINGPAGE_H
