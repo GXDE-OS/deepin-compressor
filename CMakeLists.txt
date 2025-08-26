@@ -34,10 +34,21 @@ set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -std=c++11" )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-needed -fPIE -fPIC") #-Wl,--as-needed 减少无效的库链接，用不到的库需要清理
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -Wl,-rpath=../3rdparty/interface:../../3rdparty/interface:${COMPRESSOR_PLUGIN_PATH}")
+
+if(DEFINED ENV{PREFIX})
+    set(CMAKE_INSTALL_PREFIX $ENV{PREFIX})
+    set(COMPRESSOR_PLUGIN_PATH lib/deepin-compressor/plugins)
+    if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -Wl,-rpath=${CMAKE_INSTALL_PREFIX}/lib/deepin-compressor/plugins")
+    else()
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wl,-O1,-rpath=${CMAKE_INSTALL_PREFIX}/lib/deepin-compressor/plugins")
+    endif()
 else()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wl,-O1,-rpath=${COMPRESSOR_PLUGIN_PATH}")
+    if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -Wl,-rpath=../3rdparty/interface:../../3rdparty/interface:${COMPRESSOR_PLUGIN_PATH}")
+    else()
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wl,-O1,-rpath=${COMPRESSOR_PLUGIN_PATH}")
+    endif()
 endif()
 
 #安全编译参数
@@ -63,24 +74,6 @@ set(CMAKE_VERBOSE_MAKEFILE ON) #要显示执行构建过程中详细的信息(�
 set(CMAKE_AUTOMOC ON) #打开全局moc
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
-# 引入翻译生成
-include(translation-generate)
-
-# Find Qt version
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-message("   >>> Found Qt version: ${QT_VERSION_MAJOR}")
-set(QT_DESIRED_VERSION ${QT_VERSION_MAJOR})
-
-if (QT_VERSION_MAJOR MATCHES 6)
-    set(DTK_VERSION_MAJOR 6)
-    set(KF_VERSION_MAJOR 6)
-else()
-    set(DTK_VERSION_MAJOR "")
-    set(KF_VERSION_MAJOR 5)
-endif()
-message("   >>> Build with DTK: ${DTK_VERSION_MAJOR}")
-
 
 #对DApplication 进行加速
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
@@ -102,6 +95,11 @@ endif()
 #模糊测试设置 -end
 
 
+#Generate the qm file
+set(APP_RES_DIR "src")
+set(APP_TRANS_SCRIPT "${APP_RES_DIR}/translate_generation.sh")
+execute_process(COMMAND bash ${APP_TRANS_SCRIPT}
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
 
 add_subdirectory(3rdparty)
 add_subdirectory(src)

@@ -26,7 +26,6 @@
 
 #include "cliinterface.h"
 #include "kpluginfactory.h"
-class QTimer;
 
 class LibPigzPluginFactory : public KPluginFactory
 {
@@ -59,6 +58,7 @@ public:
     PluginFinishType addComment(const QString &comment) override;
     PluginFinishType updateArchiveData(const UpdateOptions &options) override;
 
+
     /**
      * @brief pauseOperation    暂停操作
      */
@@ -73,7 +73,6 @@ public:
      * @brief doKill 强行取消
      */
     bool doKill() override;
-
 private:
     bool handleLine(const QString &line);
 
@@ -89,14 +88,12 @@ private Q_SLOTS:
     void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
-    KPtyProcess *m_process = nullptr;   // 工作进程
-    bool m_isProcessKilled = false;   // 进程已经结束
-    QByteArray m_stdOutData;   // 存储命令行输出数据
-    qint64 m_processId;   // 进程Id
-    QVector<qint64> m_childProcessId;   // 压缩tar.gz文件的子进程Id
-    qlonglong m_qTotalSize;   // 源文件总大小
-    QTimer *m_timer = nullptr;
-    QString m_scriptPath;   // 脚本路径
+    KPtyProcess *m_process = nullptr;  // 工作进程
+    bool m_isProcessKilled = false;  // 进程已经结束
+    QByteArray m_stdOutData;  // 存储命令行输出数据
+    qint64  m_processId;  // 进程Id
+    QVector<qint64> m_childProcessId; // 压缩tar.gz文件的子进程Id
+    qlonglong m_qTotalSize; // 源文件总大小
 };
 
-#endif   // libPigzPlugin_H
+#endif // libPigzPlugin_H

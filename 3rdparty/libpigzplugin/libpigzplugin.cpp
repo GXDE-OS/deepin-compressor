@@ -29,7 +29,6 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <linux/limits.h>
-#include <QTimer>
 
 LibPigzPluginFactory::LibPigzPluginFactory()
 {
@@ -38,6 +37,7 @@ LibPigzPluginFactory::LibPigzPluginFactory()
 
 LibPigzPluginFactory::~LibPigzPluginFactory()
 {
+
 }
 
 LibPigzPlugin::LibPigzPlugin(QObject *parent, const QVariantList &args)
@@ -48,20 +48,11 @@ LibPigzPlugin::LibPigzPlugin(QObject *parent, const QVariantList &args)
         qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
     }
     m_ePlugintype = PT_Libpigz;
-    m_timer = new QTimer();
-    connect(m_timer, &QTimer::timeout, this, [=]() {
-        QFileInfo info(m_strArchiveName);
-        emit signalprogress(static_cast<double>(info.size()) / m_qTotalSize * 100);
-    });
 }
 
 LibPigzPlugin::~LibPigzPlugin()
 {
     deleteProcess();
-    if (m_timer) {
-        m_timer->stop();
-        delete m_timer;
-    }
 }
 
 PluginFinishType LibPigzPlugin::list()
@@ -90,12 +81,11 @@ PluginFinishType LibPigzPlugin::addFiles(const QList<FileEntry> &files, const Co
     m_process->setPtyChannels(KPtyProcess::StdinChannel);
     m_process->setOutputChannelMode(KProcess::MergedChannels);
     m_process->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Unbuffered | QIODevice::Text);
-    //m_process->setProcessChannelMode(QProcess::MergedChannels);
 
     QString strFileName;
-    const QString oneSpace = " ";   //一个空格
-    QVector<QString> strold = { " ", "!", "$", "&", "*", "(", ")", "<", ">", "+", "-", ";" };
-    QVector<QString> strnew = { "\\ ", "\\!", "\\$", "\\&", "\\*", "\\(", "\\)", "\\<", "\\>", "\\+", "\\-", "\\;" };
+    const QString oneSpace = " "; //一个空格
+    QVector<QString> strold = {" ", "!", "$", "&", "*", "(", ")", "<", ">", "+", "-", ";"};
+    QVector<QString> strnew = {"\\ ", "\\!", "\\$", "\\&", "\\*", "\\(", "\\)", "\\<", "\\>", "\\+", "\\-", "\\;"};
     for (FileEntry file : files) {
         QString strFile = file.strFullPath;
         for (int n = 0; n < strold.length(); ++n) {
@@ -119,26 +109,13 @@ PluginFinishType LibPigzPlugin::addFiles(const QList<FileEntry> &files, const Co
         strTmparchive.replace(strold[n], strnew[n]);
     }
 
-    QString strTemp = QString("tar cvf - %1 | pigz -p %2 -%3 > %4").arg(strFileName).arg(options.iCPUTheadNum).arg(options.iCompressionLevel).arg(strTmparchive);
+    QString strTemp = QString("tar cvfz - %1 | pigz -p %2 -%3 > %4").arg(strFileName).arg(options.iCPUTheadNum).arg(options.iCompressionLevel).arg(strTmparchive);
 
-    m_scriptPath = QDir::tempPath() + "/tempScript_" + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) + ".sh";
-    QFile scriptFile(m_scriptPath);
-    if (scriptFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&scriptFile);
-        out << "#!/bin/bash\n";
+    QStringList slist = QStringList() << "-c" << strTemp;
+    m_process->setProgram(QStandardPaths::findExecutable("bash"), slist);
 
-        out << strTemp << "\n";
-        scriptFile.close();
-        QProcess::execute("chmod", { "+x", m_scriptPath });
-    }
-    m_process->setProgram(m_scriptPath, QStringList());
-    connect(m_process, &QProcess::readyReadStandardOutput, this, [=] {
+    connect(m_process, &QProcess::readyReadStandardOutput, this, [ = ] {
         readStdout();
-    });
-
-    connect(m_process, &QProcess::readyReadStandardError, this, [=] {
-        QByteArray errorOutput = m_process->readAllStandardError();
-        qDebug() << "Error Output:" << QString::fromLocal8Bit(errorOutput);
     });
 
     connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
@@ -149,9 +126,7 @@ PluginFinishType LibPigzPlugin::addFiles(const QList<FileEntry> &files, const Co
         m_childProcessId.clear();
         m_processId = m_process->processId();
 
-        getChildProcessId(m_processId, QStringList() << "tar"
-                                                     << "pigz",
-                          m_childProcessId);
+        getChildProcessId(m_processId, QStringList() << "tar" << "pigz", m_childProcessId);
     }
 
     return PFT_Nomral;
@@ -221,7 +196,6 @@ bool LibPigzPlugin::doKill()
 {
     if (m_process) {
         killProcess(false);
-        m_timer->stop();
         return true;
     }
 
@@ -238,7 +212,6 @@ bool LibPigzPlugin::handleLine(const QString &line)
         QFileInfo info(m_strArchiveName);
         emit signalprogress(static_cast<double>(info.size()) / m_qTotalSize * 100);
         emit signalCurFileName(line);
-        m_timer->start(1000);
     }
 
     return true;
@@ -265,18 +238,16 @@ void LibPigzPlugin::killProcess(bool)
         kill(static_cast<__pid_t>(processID), SIGCONT);
         kill(static_cast<__pid_t>(processID), SIGTERM);
     }
+
 }
 
 void LibPigzPlugin::deleteProcess()
 {
     if (m_process) {
         readStdout(true);
-        m_process->blockSignals(true);   // delete m_process之前需要断开所有m_process信号，防止重复处理
+        m_process->blockSignals(true); // delete m_process之前需要断开所有m_process信号，防止重复处理
         delete m_process;
         m_process = nullptr;
-        if (!m_scriptPath.isEmpty()) {
-            QFile::remove(m_scriptPath);
-        }
     }
 }
 
@@ -306,18 +277,17 @@ void LibPigzPlugin::getChildProcessId(qint64 processId, const QStringList &listK
         QByteArray dd = p.readAllStandardOutput();
         QList<QByteArray> lines = dd.split('\n');
 
-        if (lines.count() > 0 && lines[0].contains(strProcessId.toUtf8())) {   // 从包含有processId这一行开始处理
-            for (const QByteArray &line : lines) {
-                for (const QString &strKey : listKey) {
+        if (lines.count() > 0 && lines[0].contains(strProcessId.toUtf8())) {     // 从包含有processId这一行开始处理
+            for (const QByteArray &line : qAsConst(lines)) {
+                for (const QString &strKey : qAsConst(listKey)) {
                     QString str = QString("-%1(").arg(strKey);
-                    QByteArray ba = str.toUtf8();  // 将QString转换为QByteArray
-                    int iCount = line.count(ba);  // 直接使用QByteArray
+                    int iCount = line.count(str.toStdString().c_str());        // 多个子进程都需要获取到
                     int iIndex = 0;
                     for (int i = 0; i < iCount; ++i) {
-                        int iStartIndex = line.indexOf(ba, iIndex);
+                        int iStartIndex = line.indexOf(str, iIndex);
                         int iEndIndex = line.indexOf(")", iStartIndex);
                         if (0 < iStartIndex && 0 < iEndIndex) {
-                            childprocessid.append(line.mid(iStartIndex + str.length(), iEndIndex - iStartIndex - str.length()).toInt());   // 取-7z(3971)中间的进程号
+                            childprocessid.append(line.mid(iStartIndex + str.length(), iEndIndex - iStartIndex - str.length()).toInt());    // 取-7z(3971)中间的进程号
                         }
                         iIndex = iStartIndex + 1;
                     }
@@ -336,7 +306,7 @@ void LibPigzPlugin::readStdout(bool)
 
     Q_ASSERT(m_process);
 
-    if (!m_process->bytesAvailable()) {   // 无数据
+    if (!m_process->bytesAvailable()) { // 无数据
         return;
     }
 
@@ -347,12 +317,13 @@ void LibPigzPlugin::readStdout(bool)
     QList<QByteArray> lines = m_stdOutData.split('\n');
     m_stdOutData = lines.takeLast();
     // 处理命令行输出
-    for (const QByteArray &line : lines) {
+    for (const QByteArray &line : qAsConst(lines)) {
 
         if (!handleLine(QString::fromLocal8Bit(line))) {
             killProcess();
             return;
         }
+
     }
 }
 
@@ -361,11 +332,10 @@ void LibPigzPlugin::processFinished(int exitCode, QProcess::ExitStatus exitStatu
     qInfo() << "Process finished, exitcode:" << exitCode << "exitstatus:" << exitStatus;
 
     deleteProcess();
-    m_timer->stop();
 
     PluginFinishType eFinishType;
 
-    if (0 == exitCode) {   // job正常结束
+    if (0 == exitCode) { // job正常结束
         eFinishType = PFT_Nomral;
     } else {
         eFinishType = PFT_Error;

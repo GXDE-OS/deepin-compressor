@@ -79,7 +79,7 @@ PluginFinishType LibarchivePlugin::list()
         //QString commandLine = QString("%1%2%3%4").arg("7z x ").arg(filename()).arg(" -aoa -o").arg(tempFilePath);
         QStringList listArgs;
         listArgs << "x" << m_strArchiveName << "-aoa" << "-o" + tempFilePath;
-        QString strProgram = QStandardPaths::findExecutable("7z");
+        QString strProgram = QStandardPaths::findExecutable("/opt/p7zip-legacy/bin/7z");
         QProcess cmd;
         cmd.start(strProgram, listArgs);
         if (cmd.waitForFinished(-1)) {
@@ -164,6 +164,7 @@ PluginFinishType LibarchivePlugin::extractFiles(const QList<FileEntry> &files, c
 
     QString extractDst;
     bool bDlnfs = m_common->isSubpathOfDlnfs(options.strTargetPath);
+
     // Iterate through all entries in archive.
     int iIndex = 0;     // 存储索引值
     while (!QThread::currentThread()->isInterruptionRequested() && (archive_read_next_header(m_archiveReader.data(), &entry) == ARCHIVE_OK)) {
@@ -213,7 +214,7 @@ PluginFinishType LibarchivePlugin::extractFiles(const QList<FileEntry> &files, c
         // 提取:过滤选中的文件以及选中目录下所有文件
         if (!extractAll) {
             bool flag = false;
-            foreach (auto tmp, files) {
+            foreach (auto tmp, qAsConst(files)) {
                 if (tmp.isDirectory) {
                     if (entryName.startsWith(tmp.strFullPath)) {
                         flag = true;
@@ -260,6 +261,7 @@ PluginFinishType LibarchivePlugin::extractFiles(const QList<FileEntry> &files, c
         bool bLongName = false;
         QString tempFilePathName;
         QString strOriginName = entryName;
+
         if(!bDlnfs) {
             QString sDir = m_common->handleLongNameforPath(strFilePath, entryName, m_mapLongDirName, m_mapRealDirValue);
             if(sDir.length() > 0) {
@@ -786,14 +788,8 @@ void LibarchivePlugin::emitEntryForIndex(archive_entry *aentry)
     m_archiveEntryStat.strFullPath = entryName;
 
     // 文件名
-    const QStringList pieces = m_archiveEntryStat.strFullPath.split(QLatin1Char('/'),
-                                                                    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                                                                    QString::SkipEmptyParts);
-                                                                    #else
-                                                                    Qt::SkipEmptyParts);
-                                                                    #endif
+    const QStringList pieces = m_archiveEntryStat.strFullPath.split(QLatin1Char('/'), QString::SkipEmptyParts);
     m_archiveEntryStat.strFileName = pieces.last();
-
 
     // 文件真实大小（文件夹显示项）
     if (m_archiveEntryStat.isDirectory) {

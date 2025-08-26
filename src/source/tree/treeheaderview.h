@@ -6,8 +6,6 @@
 #ifndef TREEHEADERVIEW_H
 #define TREEHEADERVIEW_H
 
-#include "qtcompat.h"
-
 #include <DLabel>
 #include <DHeaderView>
 
@@ -46,7 +44,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void enterEvent(EnterEvent *event) override;
+    void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;

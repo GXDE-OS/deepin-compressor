@@ -6,9 +6,20 @@
 #ifndef DDESKTOPSERVICESTHREAD_H
 #define DDESKTOPSERVICESTHREAD_H
 
+#include <dtkwidget_global.h>
+#include <dtkgui_global.h>
+
 #include <QThread>
+
+#include <DDesktopServices>
 #include <QDebug>
 #include <QFileInfo>
+#define USE_MIN_QTVERSION QT_VERSION_CHECK(5,15,3)
+
+DWIDGET_USE_NAMESPACE
+#if (QT_VERSION >= USE_MIN_QTVERSION)
+DGUI_USE_NAMESPACE
+#endif
 
 // 文管打开文件目录线程
 class DDesktopServicesThread : public QThread

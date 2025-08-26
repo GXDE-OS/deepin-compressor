@@ -4,17 +4,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "archivejob.h"
-#include <QDebug>
 
 ArchiveJob::ArchiveJob(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << "ArchiveJob object created";
+
 }
 
 ArchiveJob::~ArchiveJob()
 {
-    qDebug() << "ArchiveJob object destroyed";
+
 }
 
 void ArchiveJob::kill()
@@ -23,7 +22,6 @@ void ArchiveJob::kill()
         // 设置结束标志
         m_eFinishedType = PFT_Cancel;
         m_eErrorType = ET_UserCancelOpertion;
-        qWarning() << "Archive job cancelled by user";
         finishJob();
     }
 }
@@ -35,7 +33,6 @@ bool ArchiveJob::status()
 
 void ArchiveJob::finishJob()
 {
-    qDebug() << "Archive job finished with status:" << m_eFinishedType;
     emit signalJobFinshed();
     deleteLater();
 }

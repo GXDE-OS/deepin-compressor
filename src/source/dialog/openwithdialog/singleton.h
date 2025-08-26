@@ -10,17 +10,9 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <type_traits>
-#endif
-
 namespace _Singleton {
 template<typename T>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-static typename std::enable_if<QtPrivate::AreArgumentsCompatible<T, QObject>::value, void>::type
-#else
 static typename QtPrivate::QEnableIf<QtPrivate::AreArgumentsCompatible<T, QObject>::value>::Type
-#endif
 handleQObject(QObject *object)
 {
     if (qApp) {
@@ -29,11 +21,7 @@ handleQObject(QObject *object)
 }
 
 template<typename T>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-static typename std::enable_if<!QtPrivate::AreArgumentsCompatible<T, QObject>::value, void>::type
-#else
 static typename QtPrivate::QEnableIf<!QtPrivate::AreArgumentsCompatible<T, QObject>::value>::Type
-#endif
 handleQObject(void*) {}
 }
 

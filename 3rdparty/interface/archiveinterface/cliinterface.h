@@ -98,9 +98,6 @@ public:
 
     // ReadWriteArchiveInterface interface
 public:
-    /**
-     * @brief note:在mtp中压缩的时候，需要先建立一个临时目录，在该临时目录中压缩，压缩完毕后move到正确的位置
-     */
     PluginFinishType addFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
     PluginFinishType moveFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
     PluginFinishType copyFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
@@ -178,8 +175,7 @@ protected:
      * @return
      */
     QString getTargetPath();
-
-    /**
+	    /**
      * @brief extractFiles 业务解压
      */
     PluginFinishType extractFiles(const QList<FileEntry> &files, const ExtractionOptions &options, bool bDlnfs);
@@ -253,7 +249,6 @@ private:
     QMap<QString, int> m_mapLongName;       // 长文件名统计
     QMap<QString, int> m_mapLongDirName;    // 长文件夹统计
     QMap<QString, int> m_mapRealDirValue;    // 真实文件统计
-    QString m_scriptPath; // 脚本路径
 };
 
 #endif // CLIINTERFACE_H

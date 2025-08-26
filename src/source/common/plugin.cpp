@@ -4,7 +4,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "plugin.h"
-#include <QDebug>
 
 #include <QJsonArray>
 #include <QStandardPaths>
@@ -14,7 +13,6 @@ Plugin::Plugin(QObject *parent, const KPluginMetaData &metaData)
     , m_enabled(true)
     , m_metaData(metaData)
 {
-    qDebug() << "Initializing plugin:" << metaData.pluginId();
 }
 
 int Plugin::priority() const
@@ -76,27 +74,20 @@ bool Plugin::hasRequiredExecutables() const
 
 bool Plugin::isValid() const
 {
-    bool valid = isEnabled() && m_metaData.isValid() && hasRequiredExecutables();
-    qDebug() << "Plugin validation:" << m_metaData.pluginId() << "is" << (valid ? "valid" : "invalid");
-    return valid;
+    return isEnabled() && m_metaData.isValid() && hasRequiredExecutables();
 }
 
 bool Plugin::findExecutables(const QStringList &executables)
 {
-    qDebug() << "Searching for required executables:" << executables;
     for (const QString &executable : executables) {
         if (executable.isEmpty()) {
             continue;
         }
 
-        const QString path = QStandardPaths::findExecutable(executable);
-        if (path.isEmpty()) {
-            qWarning() << "Executable not found:" << executable;
+        if (QStandardPaths::findExecutable(executable).isEmpty()) {
             return false;
         }
-        qDebug() << "Found executable:" << executable << "at" << path;
     }
 
-    qDebug() << "All required executables found";
     return true;
 }

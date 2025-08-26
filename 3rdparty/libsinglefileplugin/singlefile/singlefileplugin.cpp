@@ -33,11 +33,7 @@
 #include <QDir>
 #include <QThread>
 
-#if QT_VERSION < QT_VERSION_CHECK(6 ,0 ,0)
 #include <KFilterDev>
-#else
-#include <KCompressionDevice>
-#endif
 //#include <KLocalizedString>
 #include <linux/limits.h>
 
@@ -61,11 +57,6 @@ PluginFinishType LibSingleFileInterface::list()
     entry.strFullPath = uncompressedFileName();
     entry.strFileName = entry.strFullPath;
     entry.qSize = QFileInfo(m_strArchiveName).size(); // 只能获取到压缩后大小
-#if QT_VERSION < QT_VERSION_CHECK(6 ,0 ,0)
-    entry.uLastModifiedTime = QFileInfo(m_strArchiveName).lastModified().toTime_t();
-#else
-    entry.uLastModifiedTime = QFileInfo(m_strArchiveName).lastModified().toSecsSinceEpoch();
-#endif
 
     stArchiveData.qSize = entry.qSize;
     stArchiveData.qComressSize = entry.qSize;
@@ -153,11 +144,7 @@ PluginFinishType LibSingleFileInterface::extractFiles(const QList<FileEntry> &fi
     }
 
     // 打开压缩设备，写入数据
-#if QT_VERSION < QT_VERSION_CHECK(6 ,0 ,0)
     KCompressionDevice *device = new KCompressionDevice(m_strArchiveName, KFilterDev::compressionTypeForMimeType(m_mimeType));
-#else
-    KCompressionDevice *device = new KCompressionDevice(m_strArchiveName, KCompressionDevice::compressionTypeForMimeType(m_mimeType));
-#endif
     if (!device) {
         emit signalFileWriteErrorName(QFileInfo(outputFile.fileName()).fileName());
         m_eErrorType = ET_FileWriteError;

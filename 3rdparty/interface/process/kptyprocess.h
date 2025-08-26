@@ -144,11 +144,7 @@ protected:
     /**
      * @reimp
      */
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void setupChildProcess() override;
-#else
-    void setupChildProcessImpl();
-#endif
 
 private:
     Q_PRIVATE_SLOT(d_func(), void _k_onStateChanged(QProcess::ProcessState))

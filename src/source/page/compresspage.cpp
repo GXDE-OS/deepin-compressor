@@ -24,30 +24,23 @@ DGUI_USE_NAMESPACE
 CompressPage::CompressPage(QWidget *parent)
     : DWidget(parent)
 {
-    qDebug() << "CompressPage constructor called";
     initUI();
     initConnections();
-    qDebug() << "CompressPage initialization completed";
 }
 
 CompressPage::~CompressPage()
 {
-    qDebug() << "CompressPage destructor called";
+
 }
 
 void CompressPage::addCompressFiles(const QStringList &listFiles)
 {
-    qDebug() << "Adding compress files, count:" << listFiles.size();
     m_pCompressView->addCompressFiles(listFiles);
-    qDebug() << "Compress files added successfully";
 }
 
 QStringList CompressPage::compressFiles()
 {
-    qDebug() << "Getting compress files list";
-    QStringList files = m_pCompressView->getCompressFiles();
-    qDebug() << "Current compress files count:" << files.size();
-    return files;
+    return m_pCompressView->getCompressFiles();
 }
 
 QList<FileEntry> CompressPage::getEntrys()
@@ -57,16 +50,12 @@ QList<FileEntry> CompressPage::getEntrys()
 
 void CompressPage::refreshCompressedFiles(bool bChanged, const QString &strFileName)
 {
-    qInfo() << "Refreshing compressed files, changed:" << bChanged << "file:" << strFileName;
     m_pCompressView->refreshCompressedFiles(bChanged, strFileName);
-    qInfo() << "Compressed files refreshed";
 }
 
 void CompressPage::clear()
 {
-    qDebug() << "Clearing compress page";
     m_pCompressView->clear();
-    qDebug() << "Compress page cleared";
 }
 
 void CompressPage::initUI()
@@ -122,20 +111,16 @@ void CompressPage::slotCompressNextClicked()
 
 void CompressPage::slotCompressLevelChanged(bool bRootIndex)
 {
-    qInfo() << "Compress level changed, root index:" << bRootIndex;
     m_bRootIndex = bRootIndex;
     emit signalLevelChanged(bRootIndex);
+
     setAcceptDrops(bRootIndex);
-    qInfo() << "Compress level change processed";
 }
 
 void CompressPage::slotFileChoose()
 {
-    qDebug() << "File choose requested, root index:" << m_bRootIndex;
-    if (m_bRootIndex) {
-        qDebug() << "Emitting file choose signal";
+    if (m_bRootIndex)
         emit signalFileChoose();
-    }
 }
 
 CustomPushButton *CompressPage::getNextBtn() const

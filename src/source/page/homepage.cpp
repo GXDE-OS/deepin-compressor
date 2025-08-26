@@ -10,7 +10,7 @@
 #include <DFileDialog>
 #include <DFontSizeManager>
 #include <DGuiApplicationHelper>
-#include <DPaletteHelper>
+#include <DApplicationHelper>
 
 #include <QVBoxLayout>
 #include <QSettings>
@@ -24,20 +24,17 @@ DGUI_USE_NAMESPACE
 HomePage::HomePage(QWidget *parent)
     : DWidget(parent)
 {
-    qDebug() << "HomePage constructor called";
     initUI();           // 初始化界面配置
     initConnections();  // 初始化信号槽链接
-    qDebug() << "HomePage initialization completed";
 }
 
 HomePage::~HomePage()
 {
-    qDebug() << "HomePage destructor called";
+
 }
 
 void HomePage::initUI()
 {
-    qDebug() << "Initializing HomePage UI";
     // 初始化相关变量
     m_pIconLbl = new DLabel(this);
     m_pTipLbl = new DLabel(tr("Drag file or folder here"), this);
@@ -85,39 +82,28 @@ void HomePage::initUI()
 
 void HomePage::initConnections()
 {
-    qDebug() << "Setting up HomePage connections";
-    connect(m_pChooseBtn, &DCommandLinkButton::clicked, this, [this]() {
-        qInfo() << "File choose button clicked";
-        emit signalFileChoose();
-    });
+    connect(m_pChooseBtn, &DCommandLinkButton::clicked, this, &HomePage::signalFileChoose);
     QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &HomePage::slotThemeChanged);
-    qDebug() << "HomePage connections initialized";
 }
 
 void HomePage::dragEnterEvent(QDragEnterEvent *e)
 {
     const auto *mime = e->mimeData();
-    qDebug() << "Drag enter event detected, has URLs:" << mime->hasUrls();
 
     // 判断是否有url
     if (!mime->hasUrls()) {
-        qDebug() << "No URLs in drag data, ignoring";
         e->ignore();
-        return;
     }
 
     // 判断是否是本地设备文件，过滤 手机 网络 ftp smb 等
     for (const auto &url : mime->urls()) {
-        QString localFile = url.toLocalFile();
-        qDebug() << "Checking drag file:" << localFile;
-        if (!UiTools::isLocalDeviceFile(localFile)) {
-            qDebug() << "Non-local file detected:" << localFile << "ignoring";
+        if (!UiTools::isLocalDeviceFile(url.toLocalFile())) {
             e->ignore();
             return;
         }
+
     }
 
-    qDebug() << "Drag accepted";
     e->accept();
 }
 
@@ -129,12 +115,9 @@ void HomePage::dragMoveEvent(QDragMoveEvent *e)
 void HomePage::dropEvent(QDropEvent *e)
 {
     auto *const mime = e->mimeData();
-    qDebug() << "Drop event detected";
 
     if (false == mime->hasUrls()) {
-        qDebug() << "No URLs in drop data, ignoring";
         e->ignore();
-        return;
     }
 
     e->accept();
@@ -143,37 +126,28 @@ void HomePage::dropEvent(QDropEvent *e)
     QStringList fileList;
     for (const auto &url : mime->urls()) {
         if (!url.isLocalFile()) {
-            qDebug() << "Non-local URL dropped:" << url.toString();
             continue;
         }
 
-        QString localFile = url.toLocalFile();
-        qDebug() << "Adding dropped file:" << localFile;
-        fileList << localFile;
+        fileList << url.toLocalFile();
     }
 
     if (fileList.size() == 0) {
-        qDebug() << "No valid local files dropped";
         return;
     }
 
-    qDebug() << "Emitting signal for dropped files, count:" << fileList.size();
     emit signalDragFiles(fileList);
 }
 
 void HomePage::slotThemeChanged()
 {
     DGuiApplicationHelper::ColorType themeType = DGuiApplicationHelper::instance()->themeType();
-    qDebug() << "Theme changed, new type:" << themeType;
 
     if (DGuiApplicationHelper::LightType == themeType) {    // 浅色
-        qDebug() << "Setting light theme split line";
         m_pSplitLbl->setPixmap(QPixmap(":assets/icons/deepin/builtin/light/icons/split_line.svg"));
     } else if (DGuiApplicationHelper::DarkType == themeType) {  // 深色
-        qDebug() << "Setting dark theme split line";
         m_pSplitLbl->setPixmap(QPixmap(":assets/icons/deepin/builtin/dark/icons/split_line_dark.svg"));
     } else {        // 其它默认
-        qDebug() << "Setting default theme split line";
         m_pSplitLbl->setPixmap(QPixmap(":assets/icons/deepin/builtin/light/icons/split_line.svg"));
     }
 }

@@ -1,41 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ar">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ar">
 <context>
     <name>AppendDialog</name>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="441"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="438"/>
         <source>Add files to the current archive</source>
-        <translation>إضافة ملفات إلى الأرشيف الحالي</translation>
+        <translation>إضافة الملفات إلى الأرشيف الحالي</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="446"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="443"/>
         <source>Use password</source>
-        <translation>استخدام كلمة مرور</translation>
+        <translation>استخدام كلمة المرور</translation>
     </message>
 </context>
 <context>
     <name>CalculateSizeThread</name>
     <message>
-        <location filename="../src/source/common/calculatesizethread.cpp" line="62"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="68"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="136"/>
         <source>The original file of %1 does not exist, please check and try again</source>
-        <translation>الملف الأصلي لـ %1 لا موجود، يرجى التحقق وإعادة المحاولة</translation>
+        <translation>ملف الأصلي لـ %1 غير موجود، يرجى التحقق ثم المحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/common/calculatesizethread.cpp" line="64"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="70"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="138"/>
         <source>%1 does not exist on the disk, please check and try again</source>
-        <translation>'%1 لا موجود على القرص، يرجى التحقق وإعادة المحاولة'</translation>
+        <translation>%1 غير موجود على القرص، يرجى التحقق ثم المحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/common/calculatesizethread.cpp" line="74"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="79"/>
+        <location filename="../src/source/common/calculatesizethread.cpp" line="147"/>
         <source>You do not have permission to compress %1</source>
-        <translation>ليس لديك صلاحية لضغط %1</translation>
+        <translation>ليس لديك إذن لضغط %1</translation>
     </message>
 </context>
 <context>
     <name>CommentProgressDialog</name>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="232"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="234"/>
         <source>Updating the comment...</source>
         <translation>تحديث التعليق...</translation>
     </message>
@@ -43,312 +44,315 @@
 <context>
     <name>CompressPage</name>
     <message>
-        <location filename="../src/source/page/compresspage.cpp" line="76"/>
+        <location filename="../src/source/page/compresspage.cpp" line="81"/>
         <source>Next</source>
         <translation>التالي</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresspage.cpp" line="117"/>
+        <location filename="../src/source/page/compresspage.cpp" line="122"/>
         <source>Please add files</source>
         <translation>الرجاء إضافة ملف</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresspage.cpp" line="117"/>
+        <location filename="../src/source/page/compresspage.cpp" line="122"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
 </context>
 <context>
     <name>CompressSettingPage</name>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="141"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="146"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="229"/>
         <source>New Archive</source>
-        <translation>أرشيف جديد</translation>
+        <translation>مجلد جديد</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="223"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="207"/>
         <source>Advanced Options</source>
-        <translation type="unfinished">الخيارات المتقدمة</translation>
+        <translation>الخيارات المتقدمة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="227"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="211"/>
         <source>Compression method</source>
         <translation>طريقة الضغط</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="230"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="214"/>
         <source>Encrypt the archive</source>
-        <translation type="unfinished">تشفير اﻵرشيف</translation>
+        <translation>تشفير الأرشيف</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="232"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="216"/>
         <source>CPU threads</source>
-        <translation>خيوط المعالج</translation>
+        <translation>مشاريع وحدة المعالجة المركزية</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="234"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="218"/>
         <source>Encrypt the file list too</source>
-        <translation type="unfinished">تشفير قائمة الملفات أيضاً</translation>
+        <translation>تشفير قائمة الملفات أيضاً</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="236"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="220"/>
         <source>Split to volumes</source>
-        <translation type="unfinished">تقسيم إلى كتل</translation>
+        <translation>تقسيم إلى كتل</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="238"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="222"/>
         <source>Comment</source>
         <translation>تعليق</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="240"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="224"/>
         <source>Compress</source>
         <comment>button</comment>
-        <translation type="unfinished">ضغط</translation>
+        <translation>ضغط</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Store</source>
-        <translation>تخزين</translation>
+        <translation>حفظ</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Fastest</source>
-        <translation>الأسرع</translation>
+        <translation>أسرع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Fast</source>
         <translation>سريع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Normal</source>
         <translation>عادي</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Good</source>
         <translation>جيد</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="259"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="243"/>
         <source>Best</source>
         <translation>أفضل</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="266"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="250"/>
         <source>Single thread</source>
-        <translation>خيط واحد</translation>
+        <translation>1 موضوع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="266"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="250"/>
         <source>2 threads</source>
-        <translation>2 خيوط</translation>
+        <translation>2 موضوع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="266"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="250"/>
         <source>4 threads</source>
-        <translation>4 خيوط</translation>
+        <translation>4 موضوع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="266"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="250"/>
         <source>8 threads</source>
-        <translation>8 خيوط</translation>
+        <translation>8 موضوع</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="276"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="260"/>
         <source>Support zip, 7z type only</source>
-        <translation type="unfinished">يدعم ملفات zip و 7z tr فقط</translation>
+        <translation>يدعم ملفات zip و 7z tr فقط</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="279"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="263"/>
         <source>Support 7z type only</source>
-        <translation type="unfinished">يدعم ملف 7z فقط</translation>
+        <translation>يدعم ملف 7z فقط</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="291"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="275"/>
         <source>Enter up to %1 characters</source>
-        <translation>أدخل حتى %1 حرف</translation>
+        <translation>أدخل ما يصل إلى %1 حرف</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="311"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="296"/>
         <source>Name</source>
-        <translation type="unfinished">الاسم</translation>
+        <translation>الاسم</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="312"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="297"/>
         <source>Save to</source>
-        <translation type="unfinished">حفظ إلى</translation>
+        <translation>حفظ إلى</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="591"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="489"/>
         <source>Invalid file name</source>
-        <translation type="unfinished">اسم الملف غير صالح</translation>
+        <translation>اسم الملف غير صالح</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="597"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="495"/>
         <source>Please enter the path</source>
-        <translation type="unfinished">الرجاء إدخال المسار</translation>
+        <translation>الرجاء إدخال المسار</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="602"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="500"/>
         <source>The path does not exist, please retry</source>
-        <translation type="unfinished">المسار غير موجود ، يرجى إعادة المحاولة</translation>
+        <translation>المسار غير موجود ، يرجى إعادة المحاولة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="607"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="505"/>
         <source>You do not have permission to save files here, please change and retry</source>
-        <translation>ليس لديك صلاحية لحفظ الملفات هنا، يرجى التغيير وإعادة المحاولة</translation>
+        <translation>ليس لديك إذن لحفظ الملفات هنا، يرجى التغيير ثم المحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="615"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="513"/>
         <source>Too many volumes, please change and retry</source>
-        <translation>عددolumes كبير جدًا، يرجى التغيير وإعادة المحاولة</translation>
+        <translation>عدد المجلدات كبير جدًا، يرجى التغيير ثم المحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="624"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="522"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="550"/>
         <source>%1 does not exist on the disk, please check and try again</source>
-        <translation>'%1 لا موجود على القرص، يرجى التحقق وإعادة المحاولة'</translation>
+        <translation>%1 غير موجود على القرص، يرجى التحقق ثم المحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="630"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="528"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="557"/>
         <source>You do not have permission to compress %1</source>
-        <translation>ليس لديك صلاحية لضغط %1</translation>
+        <translation>ليس لديك إذن لضغط %1</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="650"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="548"/>
         <source>The original file of %1 does not exist, please check and try again</source>
-        <translation>الملف الأصلي لـ %1 لا موجود، يرجى التحقق وإعادة المحاولة</translation>
+        <translation>الملف الأصلي من هذا الملف ٪1 غير موجود، الرجاء التحقق والمحاولة مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="685"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="583"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="942"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="797"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="942"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="797"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation type="unfinished">استبدال</translation>
+        <translation>استبدال</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="844"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="705"/>
         <source>Total size: %1</source>
-        <translation>'المجموع: %1'</translation>
+        <translation>الحجم الإجمالي: 1%</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="865"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="725"/>
         <source>The name is the same as that of the compressed archive, please use another one</source>
-        <translation>>-
-اسم الملف مطابق لاسم الأرشيف المضغوط، يرجى استخدام اسم آخر
-واحد</translation>
+        <translation>الاسم هو نفس اسم الأرشيف المضغوط، الرجاء استخدام اسم آخر</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="875"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="733"/>
         <source>The password for ZIP volumes cannot be in Chinese</source>
-        <translation>كلمة المرور لـ ZIP volumes لا يمكن أن تكون باللغة الصينية</translation>
+        <translation>لا يمكن لكلمة المرور الخاصة بوحدات تخزين ذات الصيغة ZIP أن تكون باللغة الصينية</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="942"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="797"/>
         <source>Another file with the same name already exists, replace it?</source>
-        <translation type="unfinished">يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
+        <translation>يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
     </message>
     <message>
-        <location filename="../src/source/page/compresssettingpage.cpp" line="985"/>
+        <location filename="../src/source/page/compresssettingpage.cpp" line="837"/>
         <source>Only Chinese and English characters and some symbols are supported</source>
-        <translation>يتم دعم فقط الأحرف الصينية والإنجليزية وبعض الرموز</translation>
+        <translation>يتم فقط دعم الأحرف الصينية والإنجليزية وبعض الرموز</translation>
     </message>
 </context>
 <context>
     <name>CompressView</name>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="291"/>
+        <location filename="../src/source/tree/compressview.cpp" line="296"/>
         <source>Open</source>
         <translation>فتح</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="304"/>
+        <location filename="../src/source/tree/compressview.cpp" line="309"/>
         <source>Rename</source>
         <translation>إعادة تسمية</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="309"/>
+        <location filename="../src/source/tree/compressview.cpp" line="314"/>
         <source>Delete</source>
-        <translation type="unfinished">حذف</translation>
+        <translation>حذف</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="312"/>
+        <location filename="../src/source/tree/compressview.cpp" line="317"/>
         <source>Open with</source>
         <translation>فتح باستخدام</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="316"/>
+        <location filename="../src/source/tree/compressview.cpp" line="321"/>
+        <location filename="../src/source/tree/compressview.cpp" line="500"/>
         <source>Select default program</source>
-        <translation>اختيار البرنامج الافتراضي</translation>
+        <translation>اختيار البرنامج الإفتراضي</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="360"/>
+        <location filename="../src/source/tree/compressview.cpp" line="364"/>
         <source>It will permanently delete the file(s). Are you sure you want to continue?</source>
-        <translation>سوف يتم حذف الملفات بشكل دائم. هل أنت متأكد من أنك تريد الاستمرار?</translation>
+        <translation>سيتم حذف الملف (الملفات) بشكل نهائي. هل أنت متأكد من أنك تريد المتابعة؟</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="360"/>
+        <location filename="../src/source/tree/compressview.cpp" line="364"/>
+        <location filename="../src/source/tree/compressview.cpp" line="474"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="360"/>
+        <location filename="../src/source/tree/compressview.cpp" line="364"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تأكيد</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="480"/>
+        <location filename="../src/source/tree/compressview.cpp" line="475"/>
         <source>Add</source>
         <comment>button</comment>
         <translation>إضافة</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="478"/>
+        <location filename="../src/source/tree/compressview.cpp" line="473"/>
         <source>Do you want to add the archive to the list or open it in new window?</source>
-        <translation>هل ترغب في إضافة الملف إلى القائمة أم فتحه في نافذة جديدة؟</translation>
+        <translation>هل تريد إضافة الأرشيف إلى القائمة أم فتحه في نافذة جديدة؟</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/compressview.cpp" line="481"/>
+        <location filename="../src/source/tree/compressview.cpp" line="476"/>
         <source>Open in new window</source>
-        <translation>افتح في نافذة جديدة</translation>
+        <translation>فتح في نافذة جديدة</translation>
     </message>
 </context>
 <context>
     <name>ConvertDialog</name>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="310"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="312"/>
         <source>Changes to archives in this file type are not supported. Please convert the archive format to save the changes.</source>
-        <translation>لا يدعم هذا النوع من الملفات التعديل. الرجاء تحويل تنسيق الملف للحفاظ على التعديلات.</translation>
+        <translation>التغييرات التي يتم إجراؤها على الأرشيفات في هذا النوع (الصيغة) من الأرشيفات غير مدعومة، الرجاء تعيير صيغة الأرشيف لحفظ التغييرات.</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="318"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="320"/>
         <source>Convert the format to:</source>
-        <translation>تحويل التنسيق إلى:</translation>
+        <translation>التحويل إلى الصيغة التالية:</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="342"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="344"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="343"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="345"/>
         <source>Convert</source>
         <comment>button</comment>
         <translation>تحويل</translation>
@@ -357,45 +361,45 @@
 <context>
     <name>DataModel</name>
     <message>
-        <location filename="../src/source/tree/datamodel.cpp" line="63"/>
+        <location filename="../src/source/tree/datamodel.cpp" line="70"/>
         <source>item(s)</source>
-        <translation>ملف(ات)</translation>
+        <translation>عنصر(عناصر)</translation>
     </message>
 </context>
 <context>
     <name>FailurePage</name>
     <message>
-        <location filename="../src/source/page/failurepage.cpp" line="79"/>
+        <location filename="../src/source/page/failurepage.cpp" line="87"/>
         <source>Extraction failed</source>
         <comment>解压失败</comment>
-        <translation type="unfinished">فشل الاستخراج</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/failurepage.cpp" line="92"/>
-        <source>Damaged file, unable to extract</source>
-        <translation type="unfinished">ملف تالف ، تعذر استخراجه</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/failurepage.cpp" line="97"/>
-        <source>Retry</source>
-        <comment>button</comment>
-        <translation type="unfinished">إعادة المحاولة</translation>
+        <translation>فشلت عملية الاستخراج</translation>
     </message>
     <message>
         <location filename="../src/source/page/failurepage.cpp" line="100"/>
+        <source>Damaged file, unable to extract</source>
+        <translation>ملف تالف ، تعذر استخراجه</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/failurepage.cpp" line="105"/>
+        <source>Retry</source>
+        <comment>button</comment>
+        <translation>إعادة المحاولة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/failurepage.cpp" line="108"/>
         <source>Back</source>
-        <translation type="unfinished">رجوع</translation>
+        <translation>السابق</translation>
     </message>
 </context>
 <context>
     <name>HomePage</name>
     <message>
-        <location filename="../src/source/page/homepage.cpp" line="43"/>
+        <location filename="../src/source/page/homepage.cpp" line="56"/>
         <source>Drag file or folder here</source>
         <translation>قم بسحب ملفاص أو مجلداً هنا</translation>
     </message>
     <message>
-        <location filename="../src/source/page/homepage.cpp" line="45"/>
+        <location filename="../src/source/page/homepage.cpp" line="58"/>
         <source>Select File</source>
         <translation>تحديد ملف</translation>
     </message>
@@ -403,39 +407,40 @@
 <context>
     <name>LoadCorruptQuery</name>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="517"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="525"/>
         <source>The archive is damaged</source>
-        <translation>الملف مُدَمَّر</translation>
+        <translation>الأرشيف تالف</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="520"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="528"/>
         <source>Open as read-only</source>
-        <translation>افتح كقراء فقط</translation>
+        <translation>افتح للقراءة فقط</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="521"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="529"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
 </context>
 <context>
     <name>LoadingPage</name>
     <message>
-        <location filename="../src/source/page/loadingpage.cpp" line="55"/>
+        <location filename="../src/source/page/loadingpage.cpp" line="65"/>
         <source>Loading, please wait...</source>
-        <translation>جار التحميل، من فضلك انتظر...</translation>
+        <translation>جاري التحميل، الرجاء الإنتظار ...</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/main.cpp" line="146"/>
+        <location filename="../src/main.cpp" line="60"/>
+        <location filename="../src/main.cpp" line="61"/>
         <source>Archive Manager</source>
         <translation>مدير اﻷرشيفات</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="148"/>
+        <location filename="../src/main.cpp" line="62"/>
         <source>Archive Manager is a fast and lightweight application for creating and extracting archives.</source>
         <translation>مدير الأرشيفات هو تطبيق سريع وخفيف الوزن لإنشاء واستخراج اﻷرشيفات</translation>
     </message>
@@ -443,444 +448,480 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="194"/>
-        <source>Open file</source>
-        <translation>فتح ملف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="195"/>
-        <source>Settings</source>
-        <translation>اﻹعدادات</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="308"/>
-        <source>Create New Archive</source>
-        <translation>إنشاء أرشيف جديد</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="384"/>
-        <source>Converting</source>
-        <translation>جار التحويل</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2244"/>
-        <source>Compression successful</source>
-        <translation>تم الضغط بنجاح</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1568"/>
-        <source>Do you want to delete the archive?</source>
-        <translation>هل ترغب في حذف الملف؟</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="628"/>
-        <source>%1 was changed on the disk, please import it again.</source>
-        <translation>%1 تم تغييره على القرص ، يرجى استيراده مرة أخرى</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="66"/>
+        <location filename="../src/source/mainwindow.cpp" line="75"/>
         <source>Archive Manager</source>
         <translation>مدير اﻷرشيفات</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="149"/>
-        <source>You do not have permission to save files here, please change and retry</source>
-        <translation>ليس لديك إذن لحفظ الملفات هنا، الرجاء تغيير المسار وإعادة المحاولة</translation>
+        <location filename="../src/source/mainwindow.cpp" line="533"/>
+        <source>%1 was changed on the disk, please import it again.</source>
+        <translation>%1 تم تغييره على القرص ، يرجى استيراده مرة أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="149"/>
-        <source>OK</source>
-        <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <location filename="../src/source/mainwindow.cpp" line="179"/>
+        <source>Open file</source>
+        <translation>فتح ملف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="345"/>
+        <location filename="../src/source/mainwindow.cpp" line="180"/>
+        <source>Settings</source>
+        <translation>اﻹعدادات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="276"/>
+        <location filename="../src/source/mainwindow.cpp" line="286"/>
+        <source>Create New Archive</source>
+        <translation>إنشاء أرشيف جديد</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="299"/>
         <source>Adding files to %1</source>
-        <translation>جار إضافة الملفات إلى %1</translation>
+        <translation>إضافة الملفات ل 1%</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="353"/>
+        <location filename="../src/source/mainwindow.cpp" line="306"/>
         <source>Compressing</source>
         <translation>يتم الضغط</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="361"/>
+        <location filename="../src/source/mainwindow.cpp" line="313"/>
         <source>Extracting</source>
         <translation>يتم الاستخراج</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="369"/>
+        <location filename="../src/source/mainwindow.cpp" line="320"/>
         <source>Deleting</source>
-        <translation>جار الحذف</translation>
+        <translation>جاري الحذف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="515"/>
+        <location filename="../src/source/mainwindow.cpp" line="334"/>
+        <source>Converting</source>
+        <translation>جاري التحويل</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="441"/>
+        <location filename="../src/source/mainwindow.cpp" line="603"/>
         <source>You do not have permission to load %1</source>
         <translation>ليس لديك إذن لتحميل %1</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="582"/>
+        <location filename="../src/source/mainwindow.cpp" line="493"/>
+        <location filename="../src/source/mainwindow.cpp" line="2867"/>
         <source>Loading, please wait...</source>
-        <translation>جار التحميل، من فضلك انتظر...</translation>
+        <translation>التحميل، يرجى الانتظار...</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="670"/>
+        <location filename="../src/source/mainwindow.cpp" line="503"/>
+        <location filename="../src/source/mainwindow.cpp" line="2071"/>
+        <location filename="../src/source/mainwindow.cpp" line="2097"/>
+        <location filename="../src/source/mainwindow.cpp" line="2122"/>
+        <source>Plugin error</source>
+        <translation>خطأ في الإضافات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="569"/>
         <source>Are you sure you want to stop the ongoing task?</source>
-        <translation>هل أنت متأكد من أنك تريد التوقف عن المهمة الجارية؟</translation>
+        <translation>هل أنت متأكد أنك تريد إيقاف المهمة الجارية؟</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="670"/>
+        <location filename="../src/source/mainwindow.cpp" line="569"/>
+        <location filename="../src/source/mainwindow.cpp" line="1393"/>
+        <location filename="../src/source/mainwindow.cpp" line="2407"/>
+        <location filename="../src/source/mainwindow.cpp" line="2889"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="670"/>
+        <location filename="../src/source/mainwindow.cpp" line="569"/>
+        <location filename="../src/source/mainwindow.cpp" line="1393"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تأكيد</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="1464"/>
+        <location filename="../src/source/mainwindow.cpp" line="597"/>
+        <source>No such file or directory</source>
+        <translation>لم يوجد ملف أو دليل بهذا الاسم</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1284"/>
+        <source>Adding successful</source>
+        <translation>إضافة ناجحة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1290"/>
+        <location filename="../src/source/mainwindow.cpp" line="1417"/>
+        <location filename="../src/source/mainwindow.cpp" line="1433"/>
         <source>Updating, please wait...</source>
-        <translation>جار التحديث، من فضلك انتظر...</translation>
+        <translation>التحديث، يرجى الانتظار...</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="1507"/>
+        <location filename="../src/source/mainwindow.cpp" line="1332"/>
         <source>Extraction successful</source>
         <comment>提取成功</comment>
-        <translation type="unfinished">تم الاستخراج بنجاح</translation>
+        <translation>تم الاستخراج بنجاح</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="1717"/>
+        <location filename="../src/source/mainwindow.cpp" line="1542"/>
         <source>Extraction canceled</source>
         <comment>取消提取</comment>
-        <translation>تم إلغاء الاستخراج</translation>
+        <translation>الاستخراج ملغي</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="1863"/>
+        <location filename="../src/source/mainwindow.cpp" line="1676"/>
+        <source>Extraction failed: the file name is too long</source>
+        <translation>فشل الاستخراج: اسم الملف طويل جدًا</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1688"/>
+        <location filename="../src/source/mainwindow.cpp" line="1763"/>
+        <location filename="../src/source/mainwindow.cpp" line="2101"/>
+        <location filename="../src/source/mainwindow.cpp" line="2126"/>
         <source>The archive is damaged</source>
-        <translation>الملف مُدَمَّر</translation>
+        <translation>المجلد التالف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="1873"/>
-        <source>File name too long</source>
-        <translation>اسم الملف طويل جداً</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2000"/>
+        <location filename="../src/source/mainwindow.cpp" line="1825"/>
         <source>Open failed: the file name is too long</source>
-        <translation>فشل الفتح: اسم الملف طويل جداً</translation>
+        <translation>فشل في فتح: اسم الملف طويل demais</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2248"/>
+        <location filename="../src/source/mainwindow.cpp" line="2048"/>
         <source>Extraction successful</source>
         <comment>解压成功</comment>
-        <translation type="unfinished">تم الاستخراج بنجاح</translation>
+        <translation>تم الاستخراج بنجاح</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2250"/>
+        <location filename="../src/source/mainwindow.cpp" line="2050"/>
         <source>The file name is too long, so the first 60 characters have been intercepted as the file name.</source>
-        <translation>اسم الملف طويل جداً، لذلك تم التقاط أول 60 حرفًا كاسم للملف.</translation>
+        <translation>اسم الملف طويل demais، لذلك تم حذف 60 حرفًا من đầu كاسم الملف.</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2275"/>
-        <source>Failed to create file</source>
-        <translation>فشل في إنشاء الملف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2268"/>
-        <source>Compression failed</source>
-        <translation>تعذر الضغط</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2638"/>
-        <source>Replace</source>
-        <comment>button</comment>
-        <translation type="unfinished">استبدال</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2796"/>
-        <source>You cannot add files to archives in this file type</source>
-        <translation>لا يمكنك إضافة ملفات إلى أرشيفات بهذا نوع الملف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2702"/>
-        <source>Find directory</source>
-        <translation>بحث عن دليل</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2294"/>
-        <source>Open failed</source>
-        <translation>فشل في الفتح</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1794"/>
-        <source>Wrong password</source>
-        <translation>كلمة سر خاطىة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2254"/>
-        <source>Conversion successful</source>
-        <translation>التحويل ناجح</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2338"/>
-        <source>The file name is too long. Keep the name within 60 characters please.</source>
-        <translation>اسم الملف طويل جدًا. من فضلك احتفظ بالاسم ضمن 60 حرفًا</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2359"/>
-        <source>Conversion failed</source>
-        <translation>فشل في التحويل</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2510"/>
-        <source>Close</source>
-        <translation>إغلاق</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2514"/>
-        <source>Help</source>
-        <translation>مساعدة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2522"/>
-        <source>Delete</source>
-        <translation type="unfinished">حذف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2530"/>
-        <source>Display shortcuts</source>
-        <translation>عرض الأختصارات</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2542"/>
-        <source>Shortcuts</source>
-        <translation>الأختصارات</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="3292"/>
-        <source>File info</source>
-        <translation>معلومات الملف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="391"/>
-        <source>Updating comments</source>
-        <translation>تحديث التعليقات</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="377"/>
-        <source>Renaming</source>
-        <translation>إعادة التسمية</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="593"/>
-        <source>Plugin error</source>
-        <translation>خطأ في المُسند</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="700"/>
-        <source>No such file or directory</source>
-        <translation>لا يوجد ملف أو دليل بهذا الاسم</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="715"/>
-        <source>The file format is not supported by Archive Manager</source>
-        <translation>تنسيق الملف غير مدعوم من قبل مدير الأرشيف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1457"/>
-        <source>Adding successful</source>
-        <translation>تمت الإضافة بنجاح</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1491"/>
-        <source>No data in it</source>
-        <translation>لا يوجد بيانات داخلها</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1696"/>
-        <source>Adding canceled</source>
-        <translation>تم إلغاء الإضافة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1798"/>
-        <source>Adding failed</source>
-        <translation>فشل في الإضافة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1851"/>
-        <source>Extraction failed: the file name is too long</source>
-        <translation>فشل في الاستخراج: اسم الملف طويل جدًا</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="1878"/>
-        <source>Failed to create "%1"</source>
-        <translation>فشل في إنشاء "%1"</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2279"/>
+        <location filename="../src/source/mainwindow.cpp" line="2079"/>
+        <location filename="../src/source/mainwindow.cpp" line="2150"/>
         <source>Insufficient disk space</source>
         <translation>مساحة القرص غير كافية</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2283"/>
+        <location filename="../src/source/mainwindow.cpp" line="2083"/>
         <source>The compressed volumes already exist</source>
-        <translation>الوحدات المضغوطة موجودة بالفعل</translation>
+        <translation>تم إنشاء الحزم المضغوطة بالفعل</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2309"/>
-        <source>Some volumes are missing</source>
-        <translation>بعض الوحدات مفقودة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="2319"/>
+        <location filename="../src/source/mainwindow.cpp" line="2119"/>
         <source>Extraction failed</source>
         <comment>解压失败</comment>
-        <translation type="unfinished">فشل الاستخراج</translation>
+        <translation>فشلت عملية الاستخراج</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2334"/>
-        <source>Wrong password, please retry</source>
-        <translation>كلمة المرور خاطئة، من فضلك حاول مرة أخرى</translation>
+        <location filename="../src/source/mainwindow.cpp" line="2138"/>
+        <location filename="../src/source/mainwindow.cpp" line="2162"/>
+        <source>The file name is too long. Keep the name within 60 characters please.</source>
+        <translation>اسم الملف طويل demais. يرجى الاحتفاظ بالاسم ضمن 60 حرفًا.</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2518"/>
-        <source>Select file</source>
-        <translation>اختر ملفًا</translation>
+        <location filename="../src/source/mainwindow.cpp" line="2159"/>
+        <source>Conversion failed</source>
+        <translation>فشل في التحويل</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2630"/>
+        <location filename="../src/source/mainwindow.cpp" line="2399"/>
         <source>The name is the same as that of the compressed archive, please use another one</source>
-        <translation>اسم الملف هو نفسه للارشيف المضغوط، من فضلك استخدم اسمًا آخر</translation>
+        <translation> &gt;- الاسم هو نفسه مثل اسم الأرشيف المضغوط، يرجى استخدام واحد آخر</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2638"/>
+        <location filename="../src/source/mainwindow.cpp" line="2407"/>
         <source>Another file with the same name already exists, replace it?</source>
-        <translation type="unfinished">يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
+        <translation>يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2781"/>
+        <location filename="../src/source/mainwindow.cpp" line="2550"/>
         <source>You cannot add the archive to itself</source>
         <translation>لا يمكنك إضافة الأرشيف إلى نفسه</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3138"/>
+        <location filename="../src/source/mainwindow.cpp" line="2565"/>
+        <source>You cannot add files to archives in this file type</source>
+        <translation>لا يمكنك إضافة الملفات إلى المجلدات في هذا النوع من الملفات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="3167"/>
+        <source>Enter up to %1 characters</source>
+        <translation>أدخل ما يصل إلى %1 حرف</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1698"/>
+        <source>File name too long</source>
+        <translation>اسم الملف طويل demais</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2075"/>
+        <source>Failed to create file</source>
+        <translation>لم يتم إنشاء الملف</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2044"/>
+        <source>Compression successful</source>
+        <translation>تم الضغط بنجاح</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2068"/>
+        <source>Compression failed</source>
+        <translation>تعذر الضغط</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2471"/>
+        <source>Find directory</source>
+        <translation>بحث عن دليل</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2094"/>
+        <source>Open failed</source>
+        <translation>فشل في فتح</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2278"/>
+        <source>The archive was changed on the disk, please import it again.</source>
+        <translation>تم تغيير الأرشيف على القرص ، يرجى استيراده مرة أخرى.</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1619"/>
+        <location filename="../src/source/mainwindow.cpp" line="1693"/>
+        <location filename="../src/source/mainwindow.cpp" line="1768"/>
+        <location filename="../src/source/mainwindow.cpp" line="1823"/>
+        <location filename="../src/source/mainwindow.cpp" line="2105"/>
+        <source>Wrong password</source>
+        <translation>كلمة سر خاطىة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="136"/>
+        <location filename="../src/source/mainwindow.cpp" line="441"/>
+        <location filename="../src/source/mainwindow.cpp" line="503"/>
+        <location filename="../src/source/mainwindow.cpp" line="536"/>
+        <location filename="../src/source/mainwindow.cpp" line="597"/>
+        <location filename="../src/source/mainwindow.cpp" line="603"/>
+        <location filename="../src/source/mainwindow.cpp" line="612"/>
+        <location filename="../src/source/mainwindow.cpp" line="652"/>
+        <location filename="../src/source/mainwindow.cpp" line="1316"/>
+        <location filename="../src/source/mainwindow.cpp" line="2278"/>
+        <location filename="../src/source/mainwindow.cpp" line="2565"/>
+        <location filename="../src/source/mainwindow.cpp" line="2729"/>
+        <source>OK</source>
+        <comment>button</comment>
+        <translation>موافق</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="612"/>
+        <location filename="../src/source/mainwindow.cpp" line="645"/>
+        <source>The file format is not supported by Archive Manager</source>
+        <translation>نوع الملف غير مدعوم بواسطة مدير المجلدات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2054"/>
+        <source>Conversion successful</source>
+        <translation>التحويل thành succès</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2289"/>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2293"/>
+        <source>Help</source>
+        <translation>مساعدة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2301"/>
+        <source>Delete</source>
+        <translation>حذف</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2309"/>
+        <source>Display shortcuts</source>
+        <translation>عرض اختصارات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2321"/>
+        <source>Shortcuts</source>
+        <translation>اختصارات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="3043"/>
+        <source>File info</source>
+        <translation>معلومات الملف</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="341"/>
+        <source>Updating comments</source>
+        <translation>تحديث التعليقات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="327"/>
+        <source>Renaming</source>
+        <translation>إعادة تسمية</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1316"/>
+        <location filename="../src/source/mainwindow.cpp" line="2146"/>
+        <source>No data in it</source>
+        <translation>لا بيانات فيه</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1521"/>
+        <source>Adding canceled</source>
+        <translation>إلغاء الإضافة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1623"/>
+        <source>Adding failed</source>
+        <translation>فشل الإضافة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1703"/>
+        <location filename="../src/source/mainwindow.cpp" line="2142"/>
+        <source>Failed to create &quot;%1&quot;</source>
+        <translation>لم يتم إنشاء &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2109"/>
+        <location filename="../src/source/mainwindow.cpp" line="2130"/>
+        <source>Some volumes are missing</source>
+        <translation>يوجد بعض الحقول مفقودة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2134"/>
+        <source>Wrong password, please retry</source>
+        <translation>كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2297"/>
+        <source>Select file</source>
+        <translation>حدد الملف</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2407"/>
+        <source>Replace</source>
+        <comment>button</comment>
+        <translation>استبدال</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="2889"/>
         <source>Update</source>
         <comment>button</comment>
         <translation>تحديث</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3316"/>
+        <location filename="../src/source/mainwindow.cpp" line="3067"/>
         <source>Basic info</source>
         <translation>معلومات أساسية</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3332"/>
+        <location filename="../src/source/mainwindow.cpp" line="3083"/>
         <source>Size</source>
-        <translation type="unfinished">الحجم</translation>
+        <translation>الحجم</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3333"/>
+        <location filename="../src/source/mainwindow.cpp" line="3084"/>
         <source>Type</source>
-        <translation type="unfinished">النوع</translation>
+        <translation>النوع</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3334"/>
+        <location filename="../src/source/mainwindow.cpp" line="3085"/>
         <source>Location</source>
         <translation>الموقع</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3335"/>
+        <location filename="../src/source/mainwindow.cpp" line="3086"/>
         <source>Time created</source>
         <translation>وقت الإنشاء</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3336"/>
+        <location filename="../src/source/mainwindow.cpp" line="3087"/>
         <source>Time accessed</source>
         <translation>وقت الوصول</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3337"/>
+        <location filename="../src/source/mainwindow.cpp" line="3088"/>
         <source>Time modified</source>
-        <translation type="unfinished">وقت التعديل</translation>
+        <translation>وقت التعديل</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3347"/>
+        <location filename="../src/source/mainwindow.cpp" line="3098"/>
         <source>Archive</source>
-        <translation type="unfinished">أرشيف</translation>
+        <translation>أرشيف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3382"/>
+        <location filename="../src/source/mainwindow.cpp" line="3129"/>
         <source>Comment</source>
-        <translation>تعليق</translation>
+        <translation>التعليق</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3420"/>
-        <source>Enter up to %1 characters</source>
-        <translation>أدخل حتى %1 حرف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="750"/>
+        <location filename="../src/source/mainwindow.cpp" line="642"/>
         <source>Please check the file association type in the settings of Archive Manager</source>
-        <translation>يرجى التحقق من نوع ارتباط الملف في إعدادات مدير الملفات</translation>
+        <translation>يرجى التحقق من نوع ارتباط الملف في إعدادات مدير الأرشيف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="2478"/>
-        <source>The archive was changed on the disk, please import it again.</source>
-        <translation>تم تغيير الأرشيف على القرص ، يرجى استيراده مرة أخرى.</translation>
+        <location filename="../src/source/mainwindow.cpp" line="136"/>
+        <source>You do not have permission to save files here, please change and retry</source>
+        <translation>ليس لديك الصلاحية لحفظ الملفات هنا، رجاءً غير وحاول مجددا</translation>
+    </message>
+    <message>
+        <location filename="../src/source/mainwindow.cpp" line="1393"/>
+        <source>Do you want to delete the archive?</source>
+        <translation>هل تريد حذف الأرشيف؟</translation>
     </message>
 </context>
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="32"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="46"/>
         <source>Directory</source>
         <translation>دليل</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="33"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="47"/>
         <source>Application</source>
         <translation>تطبيق</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="34"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="48"/>
         <source>Video</source>
         <translation>فيديو</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="35"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="49"/>
         <source>Audio</source>
         <translation>صوت</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="36"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="50"/>
         <source>Image</source>
         <translation>صورة</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="37"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="51"/>
         <source>Archive</source>
         <translation>أرشيف</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="39"/>
-        <source>Executable</source>
-        <translation>ملف تنفيذي</translation>
-    </message>
-    <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="38"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="52"/>
         <source>Document</source>
         <translation>مستند</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="40"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="53"/>
+        <source>Executable</source>
+        <translation>ملف تنفيذي</translation>
+    </message>
+    <message>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="54"/>
         <source>Backup file</source>
         <translation>ملف نسخة احتياطية</translation>
     </message>
     <message>
-        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="41"/>
+        <location filename="../src/source/common/mimetypedisplaymanager.cpp" line="55"/>
         <source>Unknown</source>
         <translation>غير معروف</translation>
     </message>
@@ -888,39 +929,39 @@
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="274"/>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="280"/>
         <source>Open with</source>
-        <translation>التشغيل بواسطة</translation>
+        <translation>افتح باستخدام</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="294"/>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="300"/>
         <source>Add other programs</source>
         <translation>إضافة برامج أخرى</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="295"/>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="301"/>
         <source>Set as default</source>
-        <translation>تحديد كالافتراضي</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="297"/>
-        <source>Cancel</source>
-        <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="298"/>
-        <source>Confirm</source>
-        <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تعيين كافتراضي</translation>
     </message>
     <message>
         <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="303"/>
-        <source>Recommended Applications</source>
-        <translation>التطبيقات المقترحة</translation>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="305"/>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="304"/>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>تأكيد</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="308"/>
+        <source>Recommended Applications</source>
+        <translation>التطبيقات الموصى بها</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/openwithdialog/openwithdialog.cpp" line="310"/>
         <source>Other Applications</source>
         <translation>تطبيقات أخرى</translation>
     </message>
@@ -928,449 +969,446 @@
 <context>
     <name>PasswordNeededQuery</name>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="386"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="394"/>
         <source>Encrypted file, please enter the password</source>
-        <translation type="unfinished">الملف مشفر ، يرجى إدخال كلمة المرور</translation>
+        <translation>الملف مشفر ، الرجاء إدخال كلمة المرور</translation>
     </message>
 </context>
 <context>
     <name>PreviousLabel</name>
     <message>
-        <location filename="../src/source/tree/treeheaderview.cpp" line="37"/>
+        <location filename="../src/source/tree/treeheaderview.cpp" line="52"/>
         <source>Current path:</source>
-        <translation>مسار الحالي:</translation>
+        <translation>المسار الحالي:</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/treeheaderview.cpp" line="45"/>
+        <location filename="../src/source/tree/treeheaderview.cpp" line="60"/>
         <source>Back to: %1</source>
-        <translation>العودة إلى: %1</translation>
+        <translation>الرجوع إلى: 1%</translation>
     </message>
 </context>
 <context>
     <name>ProgressDialog</name>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="42"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="52"/>
         <source>%1 task(s) in progress</source>
         <translation>%1 من المهام قيد المعالجة</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="49"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="59"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="102"/>
         <source>Task</source>
         <translation>مهمة</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="55"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="65"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="113"/>
         <source>Extracting</source>
         <translation>يتم الاستخراج</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="184"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="192"/>
         <source>Are you sure you want to stop the extraction?</source>
-        <translation type="unfinished">هل أنت متأكد من أنك تريد إيقاف الاستخراج؟</translation>
+        <translation>هل أنت متأكد من أنك تريد إيقاف عملية الاستخراج؟</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="186"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="194"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/progressdialog.cpp" line="186"/>
+        <location filename="../src/source/dialog/progressdialog.cpp" line="194"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تأكيد</translation>
     </message>
 </context>
 <context>
     <name>ProgressPage</name>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="46"/>
+        <location filename="../src/source/page/progresspage.cpp" line="59"/>
+        <location filename="../src/source/page/progresspage.cpp" line="325"/>
+        <location filename="../src/source/page/progresspage.cpp" line="328"/>
+        <location filename="../src/source/page/progresspage.cpp" line="331"/>
         <source>Speed</source>
         <comment>compress</comment>
         <translation>السرعة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="46"/>
+        <location filename="../src/source/page/progresspage.cpp" line="59"/>
+        <location filename="../src/source/page/progresspage.cpp" line="61"/>
+        <location filename="../src/source/page/progresspage.cpp" line="63"/>
+        <location filename="../src/source/page/progresspage.cpp" line="65"/>
+        <location filename="../src/source/page/progresspage.cpp" line="69"/>
+        <location filename="../src/source/page/progresspage.cpp" line="72"/>
+        <location filename="../src/source/page/progresspage.cpp" line="160"/>
         <source>Calculating...</source>
-        <translation type="unfinished">يتم الحساب ...</translation>
+        <translation>يتم الحساب ...</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="48"/>
+        <location filename="../src/source/page/progresspage.cpp" line="61"/>
+        <location filename="../src/source/page/progresspage.cpp" line="335"/>
+        <location filename="../src/source/page/progresspage.cpp" line="337"/>
         <source>Speed</source>
         <comment>delete</comment>
         <translation>السرعة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="50"/>
+        <location filename="../src/source/page/progresspage.cpp" line="63"/>
+        <location filename="../src/source/page/progresspage.cpp" line="341"/>
+        <location filename="../src/source/page/progresspage.cpp" line="343"/>
         <source>Speed</source>
         <comment>rename</comment>
         <translation>السرعة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="52"/>
+        <location filename="../src/source/page/progresspage.cpp" line="65"/>
+        <location filename="../src/source/page/progresspage.cpp" line="355"/>
+        <location filename="../src/source/page/progresspage.cpp" line="357"/>
+        <location filename="../src/source/page/progresspage.cpp" line="359"/>
         <source>Speed</source>
         <comment>convert</comment>
         <translation>السرعة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="56"/>
+        <location filename="../src/source/page/progresspage.cpp" line="69"/>
+        <location filename="../src/source/page/progresspage.cpp" line="347"/>
+        <location filename="../src/source/page/progresspage.cpp" line="349"/>
+        <location filename="../src/source/page/progresspage.cpp" line="351"/>
         <source>Speed</source>
         <comment>uncompress</comment>
+        <translation>السرعة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/progresspage.cpp" line="72"/>
+        <location filename="../src/source/page/progresspage.cpp" line="321"/>
+        <source>Time left</source>
         <translation>الوقت المتبقي</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="59"/>
-        <source>Time left</source>
-        <translation>الحذف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/progresspage.cpp" line="123"/>
-        <source>Compressing</source>
-        <translation type="unfinished">يتم الضغط</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/progresspage.cpp" line="125"/>
-        <source>Deleting</source>
-        <translation>الإسماع</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/progresspage.cpp" line="127"/>
-        <source>Renaming</source>
-        <translation>التحويل</translation>
-    </message>
-    <message>
-        <location filename="../src/source/page/progresspage.cpp" line="129"/>
-        <source>Converting</source>
-        <translation>تحديث التعليق...</translation>
-    </message>
-    <message>
         <location filename="../src/source/page/progresspage.cpp" line="131"/>
-        <source>Updating the comment...</source>
-        <translation>إبقاء</translation>
+        <source>Compressing</source>
+        <translation>جاري الضغط</translation>
     </message>
     <message>
         <location filename="../src/source/page/progresspage.cpp" line="133"/>
-        <source>Extracting</source>
-        <translation type="unfinished">يتم الاستخراج</translation>
+        <source>Deleting</source>
+        <translation>جاري الحذف</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="144"/>
+        <location filename="../src/source/page/progresspage.cpp" line="135"/>
+        <source>Renaming</source>
+        <translation>جاري إعادة تسمية</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/progresspage.cpp" line="137"/>
+        <source>Converting</source>
+        <translation>جاري التحويل</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/progresspage.cpp" line="139"/>
+        <location filename="../src/source/page/progresspage.cpp" line="158"/>
+        <source>Updating the comment...</source>
+        <translation>جاري تحديث التعليق ...</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/progresspage.cpp" line="141"/>
+        <source>Extracting</source>
+        <translation>جاري الاستخراج</translation>
+    </message>
+    <message>
+        <location filename="../src/source/page/progresspage.cpp" line="152"/>
+        <location filename="../src/source/page/progresspage.cpp" line="189"/>
+        <location filename="../src/source/page/progresspage.cpp" line="375"/>
         <source>Pause</source>
         <comment>button</comment>
-        <translation>استمر</translation>
+        <translation>ايقاف مؤقت</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="185"/>
+        <location filename="../src/source/page/progresspage.cpp" line="188"/>
+        <location filename="../src/source/page/progresspage.cpp" line="404"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="173"/>
+        <location filename="../src/source/page/progresspage.cpp" line="371"/>
         <source>Continue</source>
         <comment>button</comment>
-        <translation>هل أنت متأكد من التوقف عن فك الضغط؟</translation>
+        <translation>استمرار</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="407"/>
+        <location filename="../src/source/page/progresspage.cpp" line="404"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تأكيد</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="396"/>
+        <location filename="../src/source/page/progresspage.cpp" line="393"/>
         <source>Are you sure you want to stop the decompression?</source>
-        <translation>هل أنت متأكد من التوقف عن الحذف؟</translation>
+        <translation>هل أنت متأكد من أنك تريد إيقاف عملية فك الضغط؟</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="398"/>
+        <location filename="../src/source/page/progresspage.cpp" line="395"/>
         <source>Are you sure you want to stop the deletion?</source>
-        <translation>هل أنت متأكد من التوقف عن التحويل؟</translation>
+        <translation>هل أنت متأكد من أنك تريد إيقاف عملية الحذف؟</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="394"/>
+        <location filename="../src/source/page/progresspage.cpp" line="391"/>
+        <location filename="../src/source/page/progresspage.cpp" line="397"/>
         <source>Are you sure you want to stop the compression?</source>
-        <translation type="unfinished">هل أنت متأكد من أنك تريد إيقاف الضغط ؟</translation>
+        <translation>هل أنت متأكد من أنك تريد إيقاف عملية الضغط ؟</translation>
     </message>
     <message>
-        <location filename="../src/source/page/progresspage.cpp" line="402"/>
+        <location filename="../src/source/page/progresspage.cpp" line="399"/>
         <source>Are you sure you want to stop the conversion?</source>
-        <translation>عرض الملفات المُستخرجة عند الانتهاء</translation>
+        <translation>هل أنت متأكد من أنك تريد إيقاف عملية التحويل؟</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/source/tree/datamodel.h" line="56"/>
-        <source>Name</source>
-        <translation>الاسم</translation>
-    </message>
-    <message>
-        <location filename="../src/source/tree/datamodel.h" line="56"/>
-        <source>Time modified</source>
-        <translation>وقت التعديل</translation>
-    </message>
-    <message>
-        <location filename="../src/source/tree/datamodel.h" line="56"/>
-        <source>Type</source>
-        <translation>النوع</translation>
-    </message>
-    <message>
-        <location filename="../src/source/tree/datamodel.h" line="56"/>
-        <source>Size</source>
-        <translation>الحجم</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="10"/>
-        <source>General</source>
-        <translation>عام</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="11"/>
-        <source>Extraction</source>
-        <translation>الاستخراج</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="12"/>
-        <source>Auto create a folder for multiple extracted files</source>
-        <translation>إضافة مجلد تلقائياً للمهام المتعدة للملفات المستخرجة </translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="13"/>
-        <source>Show extracted files when completed</source>
-        <translation>إدارة الملفات</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="14"/>
-        <source>File Management</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="15"/>
-        <source>Delete files after compression</source>
-        <translation> удалить файлы после сжатия</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="16"/>
-        <source>Files Associated</source>
-        <translation>ملفات مرتبطة</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settings_translation.cpp" line="17"/>
-        <source>File Type</source>
-        <translation>نوع الملف</translation>
-    </message>
-    <message>
-        <location filename="../src/source/mainwindow.cpp" line="3135"/>
-        <source>%1 changed. Do you want to save changes to the archive?</source>
-        <translation>'%1 تغيّر. هل تريد حفظ التغييرات في الملف الأرشيفي؟'</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="236"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="208"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="214"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="244"/>
         <source>Skip</source>
         <comment>button</comment>
-        <translation>تجاوز</translation>
+        <translation>تخطي</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="202"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="209"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>دمج</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="213"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="212"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="221"/>
         <source>Another file with the same name already exists, replace it?</source>
-        <translation type="unfinished">يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
+        <translation>يوجد ملف آخر بنفس الاسم بالفعل ، هل تريد استبداله ؟</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="237"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="215"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="245"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation type="unfinished">استبدال</translation>
+        <translation>استبدال</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="397"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="483"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="405"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="398"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="484"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="406"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="199"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="206"/>
         <source>Another folder with the same name already exists, replace it?</source>
-        <translation>مجلد آخر بنفس الاسم موجود بالفعل، هل تريد استبداله؟</translation>
+        <translation>يوجد مجلد آخر بنفس الاسم بالفعل، هل تريد استبداله ؟</translation>
     </message>
     <message>
-        <location filename="../3rdparty/interface/queries.cpp" line="218"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="218"/>
+        <location filename="../3rdparty/interface/queries.cpp" line="226"/>
         <source>Apply to all</source>
-        <translation>تطبيق على جميع</translation>
+        <translation>تطبيق على الكل</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/page/ut_progresspage.cpp" line="44"/>
-        <source>Speed</source>
-        <comment>compress</comment>
-        <translation>سرعة</translation>
+        <location filename="../src/source/tree/datamodel.h" line="71"/>
+        <source>Name</source>
+        <translation>الاسم</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/page/ut_progresspage.cpp" line="44"/>
-        <source>Calculating...</source>
-        <translation type="unfinished">يتم الحساب ...</translation>
+        <location filename="../src/source/tree/datamodel.h" line="71"/>
+        <source>Time modified</source>
+        <translation>وقت التعديل</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/page/ut_progresspage.cpp" line="50"/>
-        <source>Speed</source>
-        <comment>delete</comment>
-        <translation>سرعة</translation>
+        <location filename="../src/source/tree/datamodel.h" line="71"/>
+        <source>Type</source>
+        <translation>النوع</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/page/ut_progresspage.cpp" line="56"/>
-        <source>Speed</source>
-        <comment>convert</comment>
-        <translation>سرعة</translation>
+        <location filename="../src/source/tree/datamodel.h" line="71"/>
+        <source>Size</source>
+        <translation>الحجم</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/page/ut_progresspage.cpp" line="68"/>
-        <source>Speed</source>
-        <comment>uncompress</comment>
-        <translation>سرعة</translation>
+        <location filename="../src/source/mainwindow.cpp" line="2886"/>
+        <source>%1 changed. Do you want to save changes to the archive?</source>
+        <translation>٪1 تغيرت. هل تريد حفظ التغييرات في الأرشيف؟</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/tree/ut_compressview.cpp" line="383"/>
-        <source>Select default program</source>
-        <translation>اختر البرنامج الافتراضي</translation>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="26"/>
+        <source>General</source>
+        <translation>عام</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/tree/ut_compressview.cpp" line="394"/>
-        <source>other</source>
-        <translation>آخر</translation>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="27"/>
+        <source>Extraction</source>
+        <translation>الاستخراج</translation>
     </message>
     <message>
-        <location filename="../tests/UnitTest/src/source/tree/ut_datamodel.cpp" line="163"/>
-        <source>item(s)</source>
-        <translation>عنصر(ات)</translation>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="28"/>
+        <source>Auto create a folder for multiple extracted files</source>
+        <translation>إضافة مجلد تلقائياً للمهام المتعدة للملفات المستخرجة </translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="29"/>
+        <source>Show extracted files when completed</source>
+        <translation>عرض الملفات المستخرجة عند اكتمالها</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="30"/>
+        <source>File Management</source>
+        <translation>إدارة الملفات</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="31"/>
+        <source>Delete files after compression</source>
+        <translation>حذف الملفات بعد الاستخراج</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="32"/>
+        <source>Files Associated</source>
+        <translation>ملفات مرتبطة</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settings_translation.cpp" line="33"/>
+        <source>File Type</source>
+        <translation>نوع الملف</translation>
     </message>
 </context>
 <context>
     <name>RenameDialog</name>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="577"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="557"/>
         <source>Rename</source>
-        <translation>إعادة التسمية</translation>
+        <translation>إعادة تسمية</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="628"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="608"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="629"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="609"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/popupdialog.cpp" line="639"/>
+        <location filename="../src/source/dialog/popupdialog.cpp" line="619"/>
         <source>The name already exists</source>
-        <translation>الاسم موجود بالفعل</translation>
+        <translation>اسم موجود بالفعل</translation>
     </message>
 </context>
 <context>
     <name>SettingDialog</name>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="131"/>
-        <source>Recommended</source>
-        <translation>موصى به</translation>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="124"/>
+        <source>Select All</source>
+        <comment>button</comment>
+        <translation>تحديد الكل</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="171"/>
-        <source>Current directory</source>
-        <translation>الدليل الحالي</translation>
-    </message>
-    <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="130"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="125"/>
         <source>Clear All</source>
         <translation>مسح الكل</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="129"/>
-        <source>Select All</source>
-        <comment>button</comment>
-        <translation type="unfinished">تحديد الكل</translation>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="126"/>
+        <source>Recommended</source>
+        <translation>موصى به</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="165"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="160"/>
         <source>Extract archives to</source>
         <translation>استخراج إلى</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="171"/>
-        <source>Other directory</source>
-        <translation>دليل آخر</translation>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="166"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="195"/>
+        <source>Current directory</source>
+        <translation>الدليل الحالي</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="171"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="166"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="200"/>
         <source>Desktop</source>
         <translation>سطح المكتب</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="277"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="166"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="205"/>
+        <source>Other directory</source>
+        <translation>دليل آخر</translation>
+    </message>
+    <message>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="272"/>
         <source>Delete archives after extraction</source>
-        <translation> удалить الملفات الأرشيفية بعد استخراجها</translation>
+        <translation>حذف الملفات المضغوطة بعد الفك</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="283"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="278"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="299"/>
         <source>Never</source>
-        <translation>从不</translation>
+        <translation> jamais</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="283"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="278"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="302"/>
         <source>Ask for confirmation</source>
-        <translation>طلب التأكيد</translation>
+        <translation>اطلب التأكيد</translation>
     </message>
     <message>
-        <location filename="../src/source/dialog/settingdialog.cpp" line="283"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="278"/>
+        <location filename="../src/source/dialog/settingdialog.cpp" line="305"/>
         <source>Always</source>
-        <translation>بشكل دائم</translation>
+        <translation> دائما</translation>
     </message>
 </context>
 <context>
     <name>SuccessPage</name>
     <message>
-        <location filename="../src/source/page/successpage.cpp" line="70"/>
+        <location filename="../src/source/page/successpage.cpp" line="79"/>
         <source>Compression successful</source>
-        <translation type="unfinished">تم الضغط بنجاح</translation>
+        <translation>تم الضغط بنجاح</translation>
     </message>
     <message>
-        <location filename="../src/source/page/successpage.cpp" line="80"/>
+        <location filename="../src/source/page/successpage.cpp" line="89"/>
         <source>View</source>
-        <translation type="unfinished">عرض</translation>
+        <translation>عرض</translation>
     </message>
     <message>
-        <location filename="../src/source/page/successpage.cpp" line="83"/>
+        <location filename="../src/source/page/successpage.cpp" line="92"/>
         <source>Back</source>
-        <translation type="unfinished">رجوع</translation>
+        <translation>السابق</translation>
     </message>
 </context>
 <context>
     <name>TitleWidget</name>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3601"/>
+        <location filename="../src/source/mainwindow.cpp" line="3324"/>
+        <location filename="../src/source/mainwindow.cpp" line="3381"/>
         <source>Open file</source>
-        <translation type="unfinished">فتح ملف</translation>
+        <translation>فتح ملف</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3604"/>
+        <location filename="../src/source/mainwindow.cpp" line="3327"/>
         <source>Back</source>
-        <translation type="unfinished">رجوع</translation>
+        <translation>السابق</translation>
     </message>
     <message>
-        <location filename="../src/source/mainwindow.cpp" line="3660"/>
+        <location filename="../src/source/mainwindow.cpp" line="3386"/>
         <source>File info</source>
         <translation>معلومات الملف</translation>
     </message>
@@ -1378,34 +1416,36 @@
 <context>
     <name>UnCompressPage</name>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="68"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="75"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="87"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="116"/>
         <source>Extract to:</source>
         <translation>استخراج إلى :</translation>
     </message>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="110"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="117"/>
         <source>Extract</source>
         <comment>button</comment>
-        <translation type="unfinished">استخراج</translation>
+        <translation>استخراج</translation>
     </message>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="194"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="193"/>
         <source>The default extraction path does not exist, please retry</source>
-        <translation type="unfinished">مسار الاستخراج الافتراضي غير موجود ، يرجى إعادة المحاولة</translation>
+        <translation>مسار الاستخراج الافتراضي غير موجود ، يرجى إعادة المحاولة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="197"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="195"/>
         <source>You do not have permission to save files here, please change and retry</source>
-        <translation>ليس لديك إذن لحفظ الملفات هنا، يرجى تعديل المسار وحاول مرة أخرى</translation>
+        <translation>ليس لديك إذن بحفظ الملفات هنا، يرجى التغيير وإعادة المحاولة</translation>
     </message>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="201"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="199"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
     <message>
-        <location filename="../src/source/page/uncompresspage.cpp" line="217"/>
+        <location filename="../src/source/page/uncompresspage.cpp" line="213"/>
         <source>Find directory</source>
         <translation>بحث عن دليل</translation>
     </message>
@@ -1413,68 +1453,69 @@
 <context>
     <name>UnCompressView</name>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="393"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="401"/>
         <source>You cannot add the archive to itself</source>
-        <translation>لا يمكنك إضافة الملف الأرشيفي إلى نفسه</translation>
+        <translation>لا يمكنك إضافة الأرشيف لنفسه</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="393"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="401"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">موافق</translation>
+        <translation>موافق</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="622"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="627"/>
         <source>Extract</source>
         <comment>提取</comment>
-        <translation type="unfinished">استخراج</translation>
+        <translation>استخراج</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="624"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="629"/>
         <source>Extract to current directory</source>
-        <translation type="unfinished">استخراج إلى الدليل الحالي</translation>
+        <translation>استخراج إلى المجلد الحالي</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="626"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="631"/>
         <source>Open</source>
-        <translation>فتح</translation>
+        <translation>افتح</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="628"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="633"/>
         <source>Rename</source>
-        <translation>إعادة التسمية</translation>
+        <translation>إعادة تسمية</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="636"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="638"/>
         <source>Delete</source>
-        <translation type="unfinished">حذف</translation>
+        <translation>حذف</translation>
     </message>
     <message>
         <location filename="../src/source/tree/uncompressview.cpp" line="645"/>
         <source>Open with</source>
-        <translation>فتح باستخدام</translation>
+        <translation>افتح باستخدام</translation>
     </message>
     <message>
         <location filename="../src/source/tree/uncompressview.cpp" line="649"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="790"/>
         <source>Select default program</source>
         <translation>اختر البرنامج الافتراضي</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="706"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="700"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">إلغاء</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="706"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="700"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">التأكيد</translation>
+        <translation>تأكيد</translation>
     </message>
     <message>
-        <location filename="../src/source/tree/uncompressview.cpp" line="706"/>
+        <location filename="../src/source/tree/uncompressview.cpp" line="700"/>
         <source>Do you want to delete the selected file(s)?</source>
-        <translation>هل تريد حذف العناصرين(ات) المحدد(ة)؟</translation>
+        <translation>هل ترغب في حذف الملف (المختار)؟</translation>
     </message>
 </context>
 </TS>

@@ -16,6 +16,7 @@
 #include <QCollator>
 #include <QElapsedTimer>
 #include <QItemSelection>
+#include <DApplicationHelper>
 #include <DGuiApplicationHelper>
 
 DGUI_USE_NAMESPACE
@@ -23,20 +24,16 @@ DGUI_USE_NAMESPACE
 DataModel::DataModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    qDebug() << "DataModel constructor called";
     m_pMimetype = new MimeTypeDisplayManager(this);
-    qDebug() << "DataModel initialized with MimeTypeDisplayManager";
 }
 
 DataModel::~DataModel()
 {
-    qDebug() << "DataModel destructor called";
 
 }
 
 QVariant DataModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    qDebug() << "Getting header data for section:" << section << "role:" << role;
     Q_UNUSED(orientation)
 
     if (Qt::DisplayRole == role) {
@@ -50,7 +47,6 @@ QVariant DataModel::headerData(int section, Qt::Orientation orientation, int rol
 
 QVariant DataModel::data(const QModelIndex &index, int role) const
 {
-    qDebug() << "Getting data for index:" << index << "role:" << role;
     int iRow = index.row();
     int iColumn = index.column();
 
@@ -77,11 +73,7 @@ QVariant DataModel::data(const QModelIndex &index, int role) const
             }
         }
         case DC_Time: {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             return QDateTime::fromTime_t(entry.uLastModifiedTime).toString("yyyy/MM/dd hh:mm:ss");
-#else
-            return QDateTime::fromSecsSinceEpoch(entry.uLastModifiedTime).toString("yyyy/MM/dd hh:mm:ss");
-#endif
         }
         case DC_Type: {
             CustomMimeType mimetype = determineMimeType(entry.strFullPath);  // 根据全路径获取类型
@@ -143,16 +135,13 @@ int DataModel::columnCount(const QModelIndex &parent) const
 
 void DataModel::refreshFileEntry(const QList<FileEntry> &listEntry)
 {
-    qDebug() << "Refreshing file entries, count:" << listEntry.size();
-    beginResetModel();
+    beginResetModel();//在开始添加此函数
     m_listEntry = listEntry;
-    endResetModel();
-    qDebug() << "File entries refreshed successfully";
+    endResetModel();  //在结束前添加此函数
 }
 
 QItemSelection DataModel::getSelectItem(const QStringList &listName)
 {
-    qDebug() << "Getting selection for items:" << listName;
     QItemSelection selection;
 
     for (int i = 0; i < m_listEntry.size(); ++i) {
@@ -171,7 +160,6 @@ QItemSelection DataModel::getSelectItem(const QStringList &listName)
 
 QModelIndex DataModel::getListEntryIndex(const QString &listName)
 {
-    qDebug() << "Getting index for entry:" << listName;
     for (int i = 0; i < m_listEntry.size(); ++i) {
         QModelIndex index = this->index(i, DC_Name);
         // 处理是否需要选中的文件
@@ -185,7 +173,6 @@ QModelIndex DataModel::getListEntryIndex(const QString &listName)
 
 void DataModel::sort(int column, Qt::SortOrder order)
 {
-    qDebug() << "Sorting by column:" << column << "order:" << order;
     if (0 > column || 3 < column) {
         return;
     }

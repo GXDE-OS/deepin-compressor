@@ -26,22 +26,19 @@ const int g_nLineEditHeight = 36;
 TipDialog::TipDialog(QWidget *parent)
     : DDialog(parent)
 {
-    qDebug() << "TipDialog constructor";
     setFixedWidth(380);
     // 设置对话框图标
     QPixmap pixmap = UiTools::renderSVG(":assets/icons/deepin/builtin/icons/compress_warning_32px.svg", QSize(32, 32));
     setIcon(pixmap);
-    qDebug() << "TipDialog initialized with icon";
 }
 
 TipDialog::~TipDialog()
 {
-    qDebug() << "TipDialog destroyed";
+
 }
 
 int TipDialog::showDialog(const QString &strDesText, const QString btnMsg, ButtonType btnType, const QString &strToolTip)
 {
-    qDebug() << "Showing TipDialog with message:" << strDesText;
     m_strDesText = strDesText;
     // 描述内容
     DLabel *pDesLbl = new DLabel(this);
@@ -93,23 +90,20 @@ void TipDialog::changeEvent(QEvent *event)
 SimpleQueryDialog::SimpleQueryDialog(QWidget *parent)
     : DDialog(parent)
 {
-    qDebug() << "SimpleQueryDialog constructor";
     setFixedWidth(380);
 
     // 设置对话框图标
     QPixmap pixmap = UiTools::renderSVG(":assets/icons/deepin/builtin/icons/compress_warning_32px.svg", QSize(32, 32));
     setIcon(pixmap);
-    qDebug() << "SimpleQueryDialog initialized with icon";
 }
 
 SimpleQueryDialog::~SimpleQueryDialog()
 {
-    qDebug() << "SimpleQueryDialog destroyed";
+
 }
 
 int SimpleQueryDialog::showDialog(const QString &strDesText, const QString btnMsg1, DDialog::ButtonType btnType1, const QString btnMsg2, DDialog::ButtonType btnType2, const QString btnMsg3, DDialog::ButtonType btnType3)
 {
-    qDebug() << "Showing SimpleQueryDialog with message:" << strDesText;
     m_strDesText = strDesText;
     // 描述内容
     DLabel *pDesLbl = new DLabel(this);
@@ -164,22 +158,19 @@ void SimpleQueryDialog::changeEvent(QEvent *event)
 OverwriteQueryDialog::OverwriteQueryDialog(QWidget *parent)
     : DDialog(parent)
 {
-    qDebug() << "OverwriteQueryDialog constructor";
     setFixedWidth(380);
     // 设置对话框图标
     QPixmap pixmap = UiTools::renderSVG(":assets/icons/deepin/builtin/icons/compress_warning_32px.svg", QSize(64, 64));
     setIcon(pixmap);
-    qDebug() << "OverwriteQueryDialog initialized with icon";
 }
 
 OverwriteQueryDialog::~OverwriteQueryDialog()
 {
-    qDebug() << "OverwriteQueryDialog destroyed";
+
 }
 
 void OverwriteQueryDialog::showDialog(QString file, bool bDir)
 {
-    qDebug() << "Showing OverwriteQueryDialog for file:" << file << "isDir:" << bDir;
     m_strFilesname = file;
     DLabel *strlabel = new DLabel;
     strlabel->setObjectName("NameLabel");
@@ -224,17 +215,13 @@ void OverwriteQueryDialog::showDialog(QString file, bool bDir)
 
     const int mode = exec();
     m_applyAll = checkbox->isChecked();  // 是否应用到全部文件
-    qInfo() << "Overwrite dialog result:" << mode << "applyAll:" << m_applyAll;
 
     if (0 == mode) {
         m_retType = OR_Skip;  // 跳过
-        qDebug() << "User selected Skip";
     } else if (1 == mode) {
         m_retType = OR_Overwrite;  // 替换
-        qDebug() << "User selected Overwrite";
     } else {
         m_retType = OR_Cancel;   // 取消
-        qDebug() << "User selected Cancel";
     }
 }
 
@@ -303,7 +290,6 @@ ConvertDialog::~ConvertDialog()
 
 QStringList ConvertDialog::showDialog()
 {
-    qDebug() << "Showing ConvertDialog for archive format conversion";
     DLabel *strlabel = new DLabel;
     strlabel->setObjectName("ContentLabel");
     strlabel->setFixedWidth(340); // 宽度固定
@@ -366,20 +352,16 @@ QStringList ConvertDialog::showDialog()
     autoFeed(strlabel);
 
     const int mode = exec();
-    qInfo() << "Convert dialog result:" << mode << "zip:" << isZipConvert << "7z:" << is7zConvert;
 
     QStringList typeList;
     if (QDialog::Accepted == mode) {
         if (isZipConvert) {
             typeList << "true" << "zip";
-            qDebug() << "Convert to ZIP format";
         } else if (is7zConvert) {
             typeList << "true" << "7z";
-            qDebug() << "Convert to 7Z format";
         }
     } else {
         typeList << "false" << "none";
-        qDebug() << "Convert dialog cancelled";
     }
 
     return typeList;
@@ -430,7 +412,6 @@ AppendDialog::~AppendDialog()
 
 int AppendDialog::showDialog(bool bMultiplePassword)
 {
-    qDebug() << "Showing AppendDialog, multiplePassword:" << bMultiplePassword;
     // 标题
     DLabel *pTitleLbl = new DLabel(this);
     pTitleLbl->setObjectName("ContentLabel");
@@ -489,13 +470,11 @@ int AppendDialog::showDialog(bool bMultiplePassword)
     autoFeed(pTitleLbl);
 
     int iMode = exec();
-    qInfo() << "Append dialog result:" << iMode << "passwordVisible:" << m_bPasswordVisible;
 
     // 接收加密
     m_strPassword.clear();
     if (DDialog::Accepted == iMode) {
         m_strPassword = pPasswordEdit->text();
-        qDebug() << "Append with password:" << (!m_strPassword.isEmpty());
     }
 
     return iMode;
@@ -515,7 +494,7 @@ void AppendDialog::autoFeed(DLabel *pLabel)
     if (0 == m_iLabelOldHeight) { // 第一次exec自动调整
         adjustSize();
     } else {
-        setMinimumWidth(m_iDialogOldHeight - m_iLabelOldHeight - m_iCheckboxOld1Height + height_lable + newstr.fontHeifht); //字号变化后自适应调整
+        setMinimumHeight(m_iDialogOldHeight - m_iLabelOldHeight - m_iCheckboxOld1Height + height_lable + newstr.fontHeifht); //字号变化后自适应调整
     }
     m_iLabelOldHeight = height_lable;
     m_iCheckboxOld1Height = newstr.fontHeifht;
@@ -554,7 +533,6 @@ RenameDialog::~RenameDialog()
 
 int RenameDialog::showDialog(const QString &strReName, const QString &strAlias, bool isDirectory, bool isRepeat)
 {
-    qDebug() << "Showing RenameDialog for:" << strReName << "isDirectory:" << isDirectory << "isRepeat:" << isRepeat;
     if(m_lineEdit == NULL) {//创建DLineEdit,设定显示规则。
         m_lineEdit = new DLineEdit(this);
         //输入字符格式与文管保持一致

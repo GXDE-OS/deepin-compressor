@@ -17,11 +17,9 @@
  */
 Properties::Properties(const QString &fileName, const QString &group)
 {
-    qDebug() << "Creating Properties object for file:" << fileName << "group:" << group;
     if (!fileName.isEmpty()) {
         load(fileName, group);
     }
-    qDebug() << "Properties object created with" << data.size() << "items";
 }
 
 /**
@@ -30,9 +28,7 @@ Properties::Properties(const QString &fileName, const QString &group)
  */
 Properties::Properties(const Properties &other)
 {
-    qDebug() << "Creating Properties copy";
     this->data = other.data;
-    qDebug() << "Copied" << data.size() << "properties";
 }
 
 /**
@@ -43,7 +39,6 @@ Properties::Properties(const Properties &other)
  */
 bool Properties::load(const QString &fileName, const QString &group)
 {
-    qDebug() << "Loading properties from file:" << fileName << "group:" << group;
 
     // NOTE: This class is used for reading of property files instead of QSettings
     // class, which considers separator ';' as comment
@@ -51,21 +46,16 @@ bool Properties::load(const QString &fileName, const QString &group)
     // Try open file
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open properties file:" << fileName;
         return false;
     }
-    qDebug() << "File opened successfully";
 
     // Clear old data
     data.clear();
-    qDebug() << "Cleared existing properties";
 
     // Indicator whether group was found or not, if name of group was not
     // specified, groupFound is always true
     bool groupFound = group.isEmpty();
-    qDebug() << "Group search:" << (groupFound ? "disabled" : "enabled");
 
-    int loadedProperties = 0;
     // Read propeties
     QTextStream in(&file);
     while (!in.atEnd()) {
@@ -83,23 +73,17 @@ bool Properties::load(const QString &fileName, const QString &group)
         if (!group.isEmpty() && line.trimmed().startsWith("[")) {
             QString tmp = line.trimmed().replace("[", "").replace("]", "");
             groupFound = group.trimmed().compare(tmp) == 0;
-            qDebug() << "Found group:" << tmp << "match:" << groupFound;
         }
 
         // If we are in correct group and line contains assignment then read data
         int first_equal = line.indexOf('=');
 
         if (groupFound && first_equal >= 0) {
-            QString key = line.left(first_equal).trimmed();
-            QString value = line.mid(first_equal + 1).trimmed();
-            data.insert(key, value);
-            loadedProperties++;
-            qDebug() << "Loaded property:" << key << "=" << value;
+            data.insert(line.left(first_equal).trimmed(), line.mid(first_equal + 1).trimmed());
         }
     }
 
     file.close();
-    qInfo() << "Loaded" << loadedProperties << "properties from file";
 
     return true;
 }
@@ -112,36 +96,25 @@ bool Properties::load(const QString &fileName, const QString &group)
  */
 bool Properties::save(const QString &fileName, const QString &group)
 {
-    qDebug() << "Saving properties to file:" << fileName << "group:" << group;
-
     // Try open file
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open properties file for writing:" << fileName;
         return false;
     }
-    qDebug() << "File opened for writing";
 
     // Write group
     QTextStream out(&file);
     if (!group.isEmpty()) {
         out << "[" + group + "]\n";
-        qDebug() << "Wrote group header:" << group;
     }
 
     // Write data
-    int savedProperties = 0;
     foreach (QString key, data.keys()) {
-        QString value = data.value(key).toString();
-        out << key << "=" << value << "\n";
-        savedProperties++;
-        qDebug() << "Saved property:" << key << "=" << value;
+        out << key << "=" << data.value(key).toString() << "\n";
     }
 
     // Exit
     file.close();
-    qInfo() << "Saved" << savedProperties << "properties to file";
-
     return true;
 }
 
@@ -163,10 +136,6 @@ bool Properties::contains(const QString &key) const
  */
 QVariant Properties::value(const QString &key, const QVariant &defaultValue)
 {
-    qDebug() << "Getting property value for key:" << key;
-    if (!data.contains(key)) {
-        qDebug() << "Key not found, using default value";
-    }
     return data.value(key, defaultValue);
 }
 
@@ -177,14 +146,11 @@ QVariant Properties::value(const QString &key, const QVariant &defaultValue)
  */
 void Properties::set(const QString &key, const QVariant &value)
 {
-    qDebug() << "Setting property value for key:" << key;
     if (data.contains(key)) {
-        qDebug() << "Key already exists, replacing value";
         data.take(key);
     }
 
     data.insert(key, value);
-    qDebug() << "Property set successfully";
 }
 
 /**
@@ -194,6 +160,5 @@ void Properties::set(const QString &key, const QVariant &value)
  */
 QStringList Properties::getKeys() const
 {
-    qDebug() << "Getting all property keys, count:" << data.size();
     return data.keys();
 }

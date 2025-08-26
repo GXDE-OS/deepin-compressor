@@ -7,7 +7,7 @@
 
 #include <DApplication>
 #include <DStyle>
-#include <DGuiApplicationHelper>
+#include <DApplicationHelper>
 #include <DFontSizeManager>
 
 #include <QPainter>
@@ -87,7 +87,7 @@ void PreviousLabel::mouseDoubleClickEvent(QMouseEvent *event)
     QLabel::mouseDoubleClickEvent(event);
 }
 
-void PreviousLabel::enterEvent(EnterEvent *event)
+void PreviousLabel::enterEvent(QEvent *event)
 {
     if(!hasFocus()) {
         focusIn_ = true;
@@ -132,7 +132,6 @@ void PreviousLabel::keyPressEvent(QKeyEvent *event)
 TreeHeaderView::TreeHeaderView(Qt::Orientation orientation, QWidget *parent)
     : DHeaderView(orientation, parent)
 {
-    qDebug() << "TreeHeaderView constructor called with orientation:" << orientation;
     viewport()->setAutoFillBackground(false);
     setSectionsClickable(true);
     setHighlightSections(true);
@@ -176,7 +175,6 @@ TreeHeaderView::TreeHeaderView(Qt::Orientation orientation, QWidget *parent)
 
 TreeHeaderView::~TreeHeaderView()
 {
-    qDebug() << "TreeHeaderView destructor called";
 
 }
 
@@ -195,15 +193,10 @@ int TreeHeaderView::sectionSizeHint(int logicalIndex) const
 
     QFontMetrics fm(DApplication::font());
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    int width = fm.width(buf);
-#else
-    int width = fm.horizontalAdvance(buf);
-#endif
     if (sortIndicatorSection() == logicalIndex) {
-        return width + margin * 3 + 8;
+        return fm.width(buf) + margin * 3 + 8;
     } else {
-        return width + margin * 2;
+        return fm.width(buf) + margin * 2;
     }
 }
 
@@ -214,7 +207,6 @@ PreviousLabel *TreeHeaderView::getpreLbl()
 
 void TreeHeaderView::setPreLblVisible(bool bVisible)
 {
-    qDebug() << "Setting previous label visibility:" << bVisible;
     m_pPreLbl->setVisible(bVisible);
 #ifdef DTKWIDGET_CLASS_DSizeMode
     if (DGuiApplicationHelper::instance()->sizeMode() == DGuiApplicationHelper::NormalMode) {
@@ -242,7 +234,6 @@ void TreeHeaderView::setPreLblVisible(bool bVisible)
 
 void TreeHeaderView::setLabelFocus(bool focus)
 {
-    qDebug() << "Setting label focus:" << focus;
     if (focus) {
         m_pPreLbl->setFocus();
 
@@ -270,7 +261,7 @@ void TreeHeaderView::paintEvent(QPaintEvent *e)
         cg = DPalette::Active;
     #endif
 
-        DGuiApplicationHelper *dAppHelper = DGuiApplicationHelper::instance();
+        DApplicationHelper *dAppHelper = DApplicationHelper::instance();
         DPalette palette = dAppHelper->applicationPalette();
 
         DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -298,7 +289,6 @@ painter.restore();
 */
 void TreeHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
 {
-    qDebug() << "Painting section:" << logicalIndex << "with rect:" << rect;
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setOpacity(1);
@@ -311,7 +301,7 @@ void TreeHeaderView::paintSection(QPainter *painter, const QRect &rect, int logi
         cg = DPalette::Active;
     }
 
-    DGuiApplicationHelper *dAppHelper = DGuiApplicationHelper::instance();
+    DApplicationHelper *dAppHelper = DApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
 
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -391,7 +381,6 @@ void TreeHeaderView::paintSection(QPainter *painter, const QRect &rect, int logi
 
 void TreeHeaderView::resizeEvent(QResizeEvent *event)
 {
-    qDebug() << "Resize event, new size:" << event->size();
     m_pPreLbl->setFixedWidth(event->size().width() - 2 * SCROLLMARGIN);
     DHeaderView::resizeEvent(event);
 }

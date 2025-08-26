@@ -19,20 +19,17 @@
 ProgressPage::ProgressPage(QWidget *parent)
     : DWidget(parent)
 {
-    qDebug() << "ProgressPage constructor called";
     initUI();
     initConnections();
-    qDebug() << "ProgressPage initialization completed";
 }
 
 ProgressPage::~ProgressPage()
 {
-    qDebug() << "ProgressPage destructor called";
+
 }
 
 void ProgressPage::setProgressType(Progress_Type eType)
 {
-    qInfo() << "Setting progress type:" << eType;
     m_eType = eType;
     if(PT_Rename == m_eType) {
         m_pPauseContinueButton->setVisible(false);
@@ -61,13 +58,11 @@ void ProgressPage::setProgressType(Progress_Type eType)
 
 void ProgressPage::setTotalSize(qint64 qTotalSize)
 {
-    qDebug() << "Setting total size:" << qTotalSize;
     m_qTotalSize = qTotalSize;
 }
 
 void ProgressPage::setArchiveName(const QString &strArchiveName)
 {
-    qInfo() << "Setting archive name:" << strArchiveName;
     m_strArchiveName = strArchiveName;
     QFileInfo fileinfo(strArchiveName);
 
@@ -90,17 +85,14 @@ void ProgressPage::setProgress(double dPercent)
 {
     // 添加对异常进度的判断处理
     if (dPercent > 100) {
-        qWarning() << "Invalid progress percentage:" << dPercent;
         return;
     }
 
     int iPercent = qRound(dPercent);
     if (m_iPerent >= iPercent) {
-        qDebug() << "Progress not increased, current:" << m_iPerent << "new:" << iPercent;
         return ;
     }
 
-    qInfo() << "Updating progress:" << iPercent << "%";
     m_iPerent = iPercent;
     m_pProgressBar->setValue(m_iPerent);     // 进度条刷新值
     m_pProgressBar->update();
@@ -254,10 +246,8 @@ void ProgressPage::initUI()
 
 void ProgressPage::initConnections()
 {
-    qDebug() << "Initializing progress page connections";
     connect(m_pPauseContinueButton, &DSuggestButton::clicked, this, &ProgressPage::slotPauseClicked);
     connect(m_pCancelBtn, &DPushButton::clicked, this, &ProgressPage::slotCancelClicked);
-    qDebug() << "Progress page connections initialized";
 }
 
 void ProgressPage::calSpeedAndRemainingTime(double &dSpeed, qint64 &qRemainingTime)
@@ -367,12 +357,10 @@ void ProgressPage::slotPauseClicked(bool bChecked)
 {
     if (bChecked) {
         // 暂停操作
-        qInfo() << "Pause operation requested";
         m_pPauseContinueButton->setText(tr("Continue", "button"));
         emit signalPause();
     } else {
         // 继续操作
-        qInfo() << "Continue operation requested";
         m_pPauseContinueButton->setText(tr("Pause", "button"));
         emit signalContinue();
     }
@@ -380,11 +368,9 @@ void ProgressPage::slotPauseClicked(bool bChecked)
 
 void ProgressPage::slotCancelClicked()
 {
-    qInfo() << "Cancel button clicked, operation type:" << m_eType;
     // 若不是暂停状态，先暂停
     bool CheckedFlag = m_pPauseContinueButton->isChecked();
     if (!CheckedFlag) { // 原来是运行状态
-        qDebug() << "Pausing operation before cancel";
         emit m_pPauseContinueButton->clicked(true);
     }
 
@@ -407,11 +393,9 @@ void ProgressPage::slotCancelClicked()
     int iResult = dialog.showDialog(strDesText, tr("Cancel", "button"), DDialog::ButtonNormal, tr("Confirm", "button"), DDialog::ButtonRecommend);
     if (1 == iResult) {
         // 取消操作
-        qInfo() << "User confirmed cancel operation";
         emit signalCancel();
     } else {
         // 恢复原来状态
-        qInfo() << "User canceled the cancel operation";
         if (!CheckedFlag) { // 原来是运行状态
             emit m_pPauseContinueButton->clicked(false);
         }

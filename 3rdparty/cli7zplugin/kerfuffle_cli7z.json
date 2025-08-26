@@ -81,11 +81,11 @@
         "Version": "19.11.70"
     },
     "X-KDE-Kerfuffle-ReadOnlyExecutables": [
-        "7z"
+        "/opt/p7zip-legacy/bin/7z"
     ],
     "X-KDE-Kerfuffle-ReadWrite": true,
     "X-KDE-Kerfuffle-ReadWriteExecutables": [
-        "7z"
+        "/opt/p7zip-legacy/bin/7z"
     ],
     "X-KDE-Priority": 180,
     "application/x-7z-compressed": {

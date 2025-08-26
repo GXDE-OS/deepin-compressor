@@ -15,6 +15,7 @@
 #include <QSet>
 #include <QStandardPaths>
 #include <QDebug>
+#include <QDir>
 
 #include <algorithm>
 
@@ -25,9 +26,7 @@ QAtomicPointer<PluginManager> PluginManager::m_instance = nullptr;//原子指针
 PluginManager::PluginManager(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << "Initializing PluginManager";
     loadPlugins();
-    qDebug() << "PluginManager initialized with" << m_plugins.size() << "plugins";
 }
 
 PluginManager &PluginManager::get_instance()
@@ -202,7 +201,6 @@ QStringList PluginManager::supportedWriteMimeTypes(MimeSortingMode mode) const
 
 QVector<Plugin *> PluginManager::filterBy(const QVector<Plugin *> &plugins, const CustomMimeType &mimeType) const
 {
-    qDebug() << "Filtering plugins for mime type:" << mimeType.name();
     const bool supportedMime = supportedMimeTypes().contains(mimeType.name());
     QVector<Plugin *> filteredPlugins;
     for (Plugin *plugin : plugins) {
@@ -211,15 +209,15 @@ QVector<Plugin *> PluginManager::filterBy(const QVector<Plugin *> &plugins, cons
             const QStringList mimeTypes = plugin->metaData().mimeTypes();
             for (const QString &mime : mimeTypes) {
                 if (mimeType.inherits(mime)/* && (mime != "application/octet-stream")*/) {
-                    qDebug() << "Found plugin" << plugin->metaData().pluginId() << "supporting parent mime type:" << mime;
                     filteredPlugins << plugin;
                 }
             }
         } else if (plugin->metaData().mimeTypes().contains(mimeType.name())) {
-            qDebug() << "Found plugin" << plugin->metaData().pluginId() << "directly supporting mime type:" << mimeType.name();
-            
+            qInfo() << plugin->metaData().pluginId() << m_filesize << mimeType.name();
+            // if (mimeType.name() == QString("application/x-iso9660-image") && plugin->metaData().pluginId() == QString("kerfuffle_cli7z") && m_filesize  < 4294967296) { //4294967296(4GB)
+            //                continue;//when iso is more than 4G,it is udf,use 7z to extract
+            // }
             if (mimeType.name() == QString("application/x-tzo") && plugin->metaData().pluginId() == QString("kerfuffle_cli7z")) {
-                qDebug() << "Adding special case for x-tzo mime type";
                 filteredPlugins << plugin;
                 continue;
             }
@@ -228,7 +226,7 @@ QVector<Plugin *> PluginManager::filterBy(const QVector<Plugin *> &plugins, cons
         }
     }
 
-    qDebug() << "Found" << filteredPlugins.count() << "matching plugins";
+    qInfo() << filteredPlugins.count();
     return filteredPlugins;
 }
 
@@ -239,17 +237,39 @@ void PluginManager::setFileSize(qint64 size)
 
 void PluginManager::loadPlugins()
 {
-    qDebug() << "Loading plugins from /usr/lib/";
-    QCoreApplication::addLibraryPath("/usr/lib/");
+#ifndef LINGLONG_PREFIX
+#define LINGLONG_PREFIX "/usr/"
+#endif
+
+    QStringList environment = QProcess::systemEnvironment();
+    QString str, t_str;
+    foreach (str, environment) {
+        if (str.startsWith("LD_LIBRARY_PATH=")) {
+            t_str = str;
+            break;
+        }
+    }
+    if (t_str.isEmpty()) {
+        qWarning() << "library path is empty!!!!";
+    } else {
+        qInfo() << t_str;
+        QStringList liststr = t_str.split("=").at(1).split(":");
+        QString libPath;
+        libPath = liststr.size() >= 2 ? liststr.at(1) : liststr.at(0);
+        QDir dir(libPath);
+        dir.cdUp();
+
+        QCoreApplication::addLibraryPath(dir.path());
+    }
+
+    QCoreApplication::addLibraryPath("/usr/lib");
+
     const QVector<KPluginMetaData> plugins = KPluginLoader::findPlugins(QStringLiteral("deepin-compressor/plugins"));
-    qDebug() << "Found" << plugins.size() << "potential plugins";
-    
     QSet<QString> addedPlugins;
     for (const KPluginMetaData &metaData : plugins) {
         const auto pluginId = metaData.pluginId();
         // Filter out duplicate plugins.
         if (addedPlugins.contains(pluginId)) {
-            qDebug() << "Skipping duplicate plugin:" << pluginId;
             continue;
         }
 
@@ -257,9 +277,7 @@ void PluginManager::loadPlugins()
         plugin->setEnabled(true);
         addedPlugins << pluginId;
         m_plugins << plugin;
-        qDebug() << "Loaded plugin:" << pluginId;
     }
-    qDebug() << "Successfully loaded" << addedPlugins.size() << "unique plugins";
 }
 
 QVector<Plugin *> PluginManager::preferredPluginsFor(const CustomMimeType &mimeType, bool readWrite) const
@@ -320,18 +338,16 @@ QStringList PluginManager::sortByComment(const QSet<QString> &mimeTypes)
 
 bool PluginManager::libarchiveHasLzo()
 {
-    qDebug() << "Checking if libarchive has LZO support";
     // Step 1: look for the libarchive plugin, which is built against libarchive.
     const QString strPluginPath = []() {
         const QStringList paths = QCoreApplication::libraryPaths();
         for (const QString &path : paths) {
             const QString pluginPath = QStringLiteral("%1/kerfuffle/kerfuffle_libarchive.so").arg(path);
             if (QFileInfo::exists(pluginPath)) {
-                qDebug() << "Found libarchive plugin at:" << pluginPath;
                 return pluginPath;
             }
         }
-        qWarning() << "Libarchive plugin not found";
+
         return QString();
     }();
 
@@ -348,17 +364,13 @@ bool PluginManager::libarchiveHasLzo()
     const QString output = QString::fromUtf8(dependencyTool.readAllStandardOutput());
     QRegularExpression regex(QStringLiteral("/.*/libarchive.so|/.*/libarchive.*.dylib"));
     if (!regex.match(output).hasMatch()) {
-        qWarning() << "libarchive.so not found in dependencies";
         return false;
     }
 
     // Step 3: check whether libarchive links against liblzo.
     const QStringList libarchivePath(regex.match(output).captured(0));
-    qDebug() << "Found libarchive at:" << libarchivePath;
     dependencyTool.setArguments(args + libarchivePath);
     dependencyTool.start();
     dependencyTool.waitForFinished();
-    const bool hasLzo = dependencyTool.readAllStandardOutput().contains(QByteArrayLiteral("lzo"));
-    qDebug() << "Libarchive LZO support:" << hasLzo;
-    return hasLzo;
+    return dependencyTool.readAllStandardOutput().contains(QByteArrayLiteral("lzo"));
 }
