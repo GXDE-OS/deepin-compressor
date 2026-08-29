@@ -60,7 +60,6 @@ QStringList CliProperties::addArgs(const QString &archive, const QStringList &fi
         //        注意字符转意，待优化
 
         QStringList args;
-        args << "-c";
 
         QString tmp = "tar cf - ";
         //重命名文件
@@ -331,7 +330,7 @@ QStringList CliProperties::substituteCommentSwitch(const QString &commentfile) c
 
 QStringList CliProperties::substitutePasswordSwitch(const QString &password, bool headerEnc) const
 {
-    if (password.isEmpty()) {
+    if (password.isEmpty() || password.isNull()) {
         return QStringList();
     }
 

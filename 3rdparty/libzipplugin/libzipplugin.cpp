@@ -83,6 +83,12 @@ PluginFinishType LibzipPlugin::list()
     int errcode = 0;
     zip_error_t err;
 
+    // 是否支持seek
+    if (!m_common->isSupportSeek(m_strArchiveName)) {
+        m_eErrorType = ET_FileSeekError;
+        return PFT_Error;
+    }
+
     // 打开压缩包文件
     zip_t *archive = zip_open(QFile::encodeName(m_strArchiveName).constData(), ZIP_RDONLY, &errcode);   // 打开压缩包文件
     zip_error_init_with_code(&err, errcode);
@@ -136,6 +142,12 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
 //    m_bHandleCurEntry = false; //false:提取使用选中文件及子文件 true:提取使用选中文件
     zip_error_t err;
 
+    // 是否支持seek
+    if (!m_common->isSupportSeek(m_strArchiveName)) {
+        m_eErrorType = ET_FileSeekError;
+        return PFT_Error;
+    }
+
     // 打开压缩包
     zip_t *archive = zip_open(QFile::encodeName(m_strArchiveName).constData(), ZIP_RDONLY, &errcode);
     zip_error_init_with_code(&err, errcode);
@@ -152,13 +164,14 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
     } else {
         m_dScaleSize = 100.0 / options.qSize;
     }
-    m_bDlnfs = m_common->isSubpathOfDlnfs(options.strTargetPath);
+    m_bLnfs = m_common->isSubpathOfLnfs(options.strTargetPath);
 
     // 执行解压操作
     bool bHandleLongName = false;
     if (options.bAllExtract) {  // 全部解压
         qlonglong qExtractSize = 0;
         zip_int64_t nofEntries = zip_get_num_entries(archive, 0);
+        zip_int64_t lastNeedPasswordIndex = -1;
         for (zip_int64_t i = 0; i < nofEntries; ++i) {
             if (QThread::currentThread()->isInterruptionRequested()) {
                 m_bCancel = false;      // 重置标志位
@@ -185,6 +198,15 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
             } else {    // 处理错误
                 // 判断是否需要密码，若需要密码，弹出密码输入对话框，用户输入密码之后，重新解压当前文件
                 if (ET_WrongPassword == m_eErrorType || ET_NeedPassword == m_eErrorType) {
+
+                    // 询问输入密码后，仍然输入错误密码，则直接返回,给出错误提示
+                    if (lastNeedPasswordIndex == i) {
+                        zip_close(archive);
+                        m_strPassword = "";
+                        return PFT_Error;
+                    }
+
+                    // 全部解压时显示当前需要密码的加密文件名
                     PasswordNeededQuery query(strFileName);
                     emit signalQuery(&query);
                     query.waitForResponse();
@@ -195,7 +217,9 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
                         return PFT_Cancel;
                     } else {
                         setPassword(query.password());
-                        zip_set_default_password(archive, m_strPassword.toUtf8().constData());
+                        QByteArray passwordBytes = passwordUnicode(m_strPassword, 0);
+                        zip_set_default_password(archive, passwordBytes.constData());
+                        lastNeedPasswordIndex = i;
                         i--;
                     }
                 }  else {
@@ -227,10 +251,19 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
                 zip_close(archive);
                 return PFT_Cancel;
             } else {    // 处理错误
+                //密码错误, 给出错误提示
+                if(ET_WrongPassword == m_eErrorType && !m_strPassword.isEmpty()) {
+                    zip_close(archive);
+                    m_strPassword = "";
+                    emit error(("Wrong password."));
+                    return PFT_Error;
+                }
                 // 判断是否需要密码，若需要密码，弹出密码输入对话框，用户输入密码之后，重新解压当前文件
                 if (ET_WrongPassword == m_eErrorType || ET_NeedPassword == m_eErrorType) {
 
-                    PasswordNeededQuery query(strFileName);
+                    // 根据解压文件数量决定显示的名称：单文件显示文件名，多文件显示压缩包名
+                    QString displayName = (m_listCurIndex.count() == 1) ? strFileName : m_strArchiveName;
+                    PasswordNeededQuery query(displayName);
                     emit signalQuery(&query);
                     query.waitForResponse();
 
@@ -240,7 +273,8 @@ PluginFinishType LibzipPlugin::extractFiles(const QList<FileEntry> &files, const
                         return PFT_Cancel;
                     } else {
                         setPassword(query.password());
-                        zip_set_default_password(archive, m_strPassword.toUtf8().constData());
+                        QByteArray passwordBytes = passwordUnicode(m_strPassword, 0);
+                        zip_set_default_password(archive, passwordBytes.constData());
                         i--;
                     }
                 } else {
@@ -639,12 +673,13 @@ bool LibzipPlugin::writeEntry(zip_t *archive, const QString &entry, const Compre
     // 设置压缩的加密算法
     if (options.bEncryption && !options.strEncryptionMethod.isEmpty()) { //ReadOnlyArchiveInterface::password()
         int ret = 0;
+        QByteArray passwordBytes = passwordUnicode(options.strPassword, 0);
         if (QLatin1String("AES128") == options.strEncryptionMethod) {
-            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_128, options.strPassword.toUtf8().constData());
+            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_128, passwordBytes.constData());
         } else if (QLatin1String("AES192") == options.strEncryptionMethod) {
-            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_192, options.strPassword.toUtf8().constData());
+            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_192, passwordBytes.constData());
         } else if (QLatin1String("AES256") == options.strEncryptionMethod) {
-            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_256, options.strPassword.toUtf8().constData());
+            ret = zip_file_set_encryption(archive, uindex, ZIP_EM_AES_256, passwordBytes.constData());
         }
         if (ret != 0) {
             emit error(("Failed to set compression options for entry: %1"));
@@ -725,7 +760,13 @@ void LibzipPlugin::statBuffer2FileEntry(const zip_stat_t &statBuffer, FileEntry 
 
     // 文件名
     if (statBuffer.valid & ZIP_STAT_NAME) {
-        const QStringList pieces = entry.strFullPath.split(QLatin1Char('/'), QString::SkipEmptyParts);
+        const QStringList pieces = entry.strFullPath.split(QLatin1Char('/'),
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QString::SkipEmptyParts
+        #else
+            Qt::SkipEmptyParts
+        #endif
+            );
         entry.strFileName = pieces.isEmpty() ? QString() : pieces.last();
     }
 
@@ -761,8 +802,8 @@ ErrorType LibzipPlugin::extractEntry(zip_t *archive, zip_int64_t index, const Ex
     }
 
     strFileName = m_common->trans2uft8(statBuffer.name, m_mapFileCode[index]);    // 解压文件名（压缩包中）
-    //fix 232873
-    if(strFileName.indexOf("../") != -1) {
+    //fix 232873 - Remove all "../" components to prevent path traversal attacks
+    while(strFileName.contains("../")) {
         qInfo() << "skipped ../ path component(s) in " << strFileName;
         strFileName = strFileName.replace("../", "");
     }
@@ -790,7 +831,7 @@ ErrorType LibzipPlugin::extractEntry(zip_t *archive, zip_int64_t index, const Ex
     }
 
     QString tempFilePathName;
-    if(!m_bDlnfs) {
+    if(!m_bLnfs) {
         QString sDir = m_common->handleLongNameforPath(strFilePath, strFileName, m_mapLongDirName, m_mapRealDirValue);
         if(sDir.length() > 0) {
            strFilePath = sDir.endsWith(QDir::separator())?sDir.left(sDir.length() -1):sDir;
@@ -859,6 +900,21 @@ ErrorType LibzipPlugin::extractEntry(zip_t *archive, zip_int64_t index, const Ex
 
     // 解压完整文件名（含路径）
     QString strDestFileName = options.strTargetPath + QDir::separator() + strFileName;
+
+    // Additional security check: ensure the final path is within the target directory
+    QString cleanTargetPath = QDir::cleanPath(QDir(options.strTargetPath).absolutePath());
+    QString cleanDestPath = QDir::cleanPath(QDir(strDestFileName).absolutePath());
+    if (!cleanDestPath.startsWith(cleanTargetPath + QDir::separator()) &&
+        cleanDestPath != cleanTargetPath) {
+        qInfo() << "Path traversal detected! Rejected path: " << strFileName;
+        return ET_FileWriteError;
+    }
+
+    // 写入文件前检查路径是否通过符号链接逃逸
+    if (!extractPathIsWithinTarget(options.strTargetPath, strDestFileName)) {
+        qInfo() << "Rejected path (symlink escape detected):" << strDestFileName;
+        return ET_FileWriteError;
+    }
 
     QFile file(strDestFileName);
 

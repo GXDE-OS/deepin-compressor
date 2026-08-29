@@ -33,8 +33,6 @@
 
 #include <QIODevice>
 
-#include <list>
-
 #define KMAXINT ((int)(~0U >> 1))
 
 struct KPtyDevicePrivate;
@@ -48,8 +46,7 @@ class QSocketNotifier;
 /**
  * Encapsulates KPty into a QIODevice, so it can be used with Q*Stream, etc.
  */
-class KPtyDevice : public QIODevice, public KPty
-{
+class KPtyDevice : public QIODevice, public KPty {
     Q_OBJECT
     Q_DECLARE_PRIVATE_MI(KPtyDevice, KPty)
 
@@ -255,8 +252,8 @@ public:
             buffers.back().resize(tail);
             QByteArray tmp;
             tmp.resize(qMax(CHUNKSIZE, bytes));
+            ptr = tmp.data();
             buffers.push_back(tmp);
-            ptr = buffers.back().data();
             tail = bytes;
         }
         return ptr;
@@ -339,7 +336,7 @@ struct KPtyDevicePrivate : public KPtyPrivate {
 
     Q_DECLARE_PUBLIC(KPtyDevice)
 
-    KPtyDevicePrivate(KPty *parent) :
+    KPtyDevicePrivate(KPty* parent) :
         KPtyPrivate(parent),
         emittedReadyRead(false), emittedBytesWritten(false),
         readNotifier(nullptr), writeNotifier(nullptr)

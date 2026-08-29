@@ -216,7 +216,13 @@ bool CliRarPlugin::readListLine(const QString &line)
             m_fileEntry.strFullPath = parseLineRight;
 
             // 文件名称
-            const QStringList pieces = m_fileEntry.strFullPath.split(QLatin1Char('/'), QString::SkipEmptyParts);
+            const QStringList pieces = m_fileEntry.strFullPath.split(QLatin1Char('/'),
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                QString::SkipEmptyParts
+            #else
+                Qt::SkipEmptyParts
+            #endif
+                );
             m_fileEntry.strFileName = pieces.isEmpty() ? QString() : pieces.last();
         } else if (parseLineLeft == QLatin1String("Type")) {
             if (parseLineRight == QLatin1String("Directory")) {
@@ -241,7 +247,12 @@ bool CliRarPlugin::readListLine(const QString &line)
             QString time = line.left((line.length() - 10));
             // 文件最后修改时间
             m_fileEntry.uLastModifiedTime = QDateTime::fromString(time.right(time.length() - 14),
-                                                                  QStringLiteral("yyyy-MM-dd hh:mm:ss")).toTime_t();
+                                                                  QStringLiteral("yyyy-MM-dd hh:mm:ss"))
+                                                                  #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                                                                  .toTime_t();
+                                                                  #else
+                                                                 .toSecsSinceEpoch();
+                                                                  #endif
 
             QString name = m_fileEntry.strFullPath;
 
@@ -284,15 +295,11 @@ bool CliRarPlugin::handleLine(const QString &line, WorkType workStatus)
     }
 
     if (isWrongPasswordMsg(line)) {  // 提示密码错误
-        // RAR4密码错误直接结束
-        if (line.startsWith(QLatin1String("Checksum error in the encrypted file"))) {
-            m_eErrorType = ET_WrongPassword;
-            m_finishType = PFT_Error;
-            return false;
-        } else { // RAR5密码错误反复输入新密码
-            m_eErrorType = ET_WrongPassword;
-            return true;
-        }
+        // Strategy: treat wrong password as fatal and let UI show failure page with retry,
+        // consistent with zip/7z behavior.
+        m_eErrorType = ET_WrongPassword;
+        m_finishType = PFT_Error;
+        return false;
     }
 
     if (workStatus == WT_List) {

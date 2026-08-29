@@ -35,6 +35,7 @@ class OpenFileWatcher;
 class QFileSystemWatcher;
 class CalculateSizeThread;
 class TitleWidget;
+class ApplicationAdaptor;
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -83,6 +84,16 @@ public :
      * @brief handleQuit    处理退出
      */
     void handleQuit();
+
+    /**
+     * @brief saveConfigWinState    保存窗口状态（大小和最大化状态）
+     */
+    void saveConfigWinState();
+
+    /**
+     * @brief restoreConfigWinState 恢复窗口状态（大小和最大化状态）
+     */
+    void restoreConfigWinState();
 
 private:
     /**
@@ -205,6 +216,18 @@ private:
     void ConstructAddOptionsByThread(const QString &path);
 
     /**
+     * @brief prepareCompressAliasEntries  为重命名文件准备临时别名文件
+     * @param listEntry 待压缩的文件信息
+     * @return 是否准备成功
+     */
+    bool prepareCompressAliasEntries(QList<FileEntry> &listEntry);
+
+    /**
+     * @brief cleanupCompressAliasEntries 清理临时别名文件
+     */
+    void cleanupCompressAliasEntries();
+
+    /**
      * @brief showSuccessInfo   显示成功信息
      * @param eSuccessInfo      成功信息
      */
@@ -222,13 +245,6 @@ private:
      * @return  之前保存的窗口大小
      */
     QSize getConfigWinSize();
-
-    /**
-     * @brief saveConfigWinSize     保存窗口尺寸
-     * @param w     宽度
-     * @param h     高度
-     */
-    void saveConfigWinSize(int w, int h);
 
     /**
      * @brief convertArchive 格式转换
@@ -345,13 +361,13 @@ private Q_SLOTS:
      * @brief slotTitleBtnClicked   选择文件触发
      */
     void slotChoosefiles();
-
+public Q_SLOTS:
     /**
      * @brief slotDragSelectedFiles     拖拽添加文件
      * @param listFiles     拖拽的文件
      */
     void slotDragSelectedFiles(const QStringList &listFiles);
-
+private Q_SLOTS:
     /**
      * @brief compressLevelChanged  处理压缩层级变化
      * @param bRootIndex    是否是根目录
@@ -375,13 +391,13 @@ private Q_SLOTS:
      * @param eErrorType            错误类型
      */
     void slotJobFinished(ArchiveJob::JobType eJobType, PluginFinishType eFinishType, ErrorType eErrorType);
-
+public Q_SLOTS:
     /**
      * @brief slotUncompressClicked     解压按钮点击，执行解压操作
      * @param strUncompressPath         解压路径
      */
     void slotUncompressClicked(const QString &strUncompressPath);
-
+private Q_SLOTS:
     /**
      * @brief slotReceiveProgress   进度信号处理
      * @param dPercentage   进度值
@@ -572,6 +588,9 @@ private:
 #endif
 
     QString m_strCurrentName;
+    QString m_strCompressAliasRoot;
+    bool m_needCleanupCompressAlias = false;
+    ApplicationAdaptor *m_compressorInterface = nullptr;  // DBus interface
 };
 
 class TitleWidget : public QWidget

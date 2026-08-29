@@ -313,11 +313,11 @@ TEST_F(UT_MainWindow, test_loadArchive_001)
 
 TEST_F(UT_MainWindow, test_loadArchive_002)
 {
-//    Stub stub;
-//    QFileInfoStub::stub_QFileInfo_isReadable(stub, true);
-//    QFileInfoStub::stub_QFileInfo_exists(stub, false);
-//    m_tester->loadArchive("1.zip");
-//    EXPECT_EQ(m_tester->m_ePageID == PI_Failure, true);
+    Stub stub;
+    QFileInfoStub::stub_QFileInfo_isReadable(stub, true);
+    QFileInfoStub::stub_QFileInfo_exists(stub, false);
+    m_tester->loadArchive("1.zip");
+    EXPECT_EQ(m_tester->m_ePageID == PI_Failure, true);
 }
 
 TEST_F(UT_MainWindow, test_loadArchive_003)
@@ -351,16 +351,16 @@ TEST_F(UT_MainWindow, test_timerEvent_001)
 
 TEST_F(UT_MainWindow, test_timerEvent_002)
 {
-//    Stub stub;
-//    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
-//    stub.set(ADDR(CompressPage, compressFiles), compressPage_compressFiles_stub);
-//    QFileInfoStub::stub_QFileInfo_exists(stub, false);
+    Stub stub;
+    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
+    stub.set(ADDR(CompressPage, compressFiles), compressPage_compressFiles_stub);
+    QFileInfoStub::stub_QFileInfo_exists(stub, false);
 
-//    QTimerEvent *event = new QTimerEvent(m_tester->m_iCompressedWatchTimerID);
-//    m_tester->timerEvent(event);
-//    delete event;
-//    EXPECT_EQ(m_tester->m_initFlag, false);
-//    EXPECT_EQ(m_tester->m_ePageID, PI_Compress);
+    QTimerEvent *event = new QTimerEvent(m_tester->m_iCompressedWatchTimerID);
+    m_tester->timerEvent(event);
+    delete event;
+    EXPECT_EQ(m_tester->m_initFlag, false);
+    EXPECT_EQ(m_tester->m_ePageID, PI_Compress);
 }
 
 TEST_F(UT_MainWindow, test_timerEvent_003)
@@ -435,12 +435,12 @@ TEST_F(UT_MainWindow, test_checkSettings_003)
 
 TEST_F(UT_MainWindow, test_checkSettings_004)
 {
-//    Stub stub;
-//    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
-//    QFileInfoStub::stub_QFileInfo_exists(stub, true);
-//    QFileInfoStub::stub_QFileInfo_isReadable(stub, true);
-//    QFileInfoStub::stub_QFileInfo_isDir(stub, false);
-//    EXPECT_EQ(m_tester->checkSettings(""), true);
+    Stub stub;
+    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
+    QFileInfoStub::stub_QFileInfo_exists(stub, true);
+    QFileInfoStub::stub_QFileInfo_isReadable(stub, true);
+    QFileInfoStub::stub_QFileInfo_isDir(stub, false);
+    EXPECT_EQ(m_tester->checkSettings(""), true);
 }
 
 CustomMimeType determineMimeType_stub(const QString &)
@@ -972,9 +972,14 @@ TEST_F(UT_MainWindow, test_slotReceiveFileWriteErrorName)
 
 TEST_F(UT_MainWindow, test_slotQuery)
 {
-    Stub stub;
-    CommonStub::stub_OverwriteQuery_execute(stub);
-    OverwriteQuery query("", m_tester);
+    // 使用子类重写execute()替代二进制桩，避免ASan与桩框架冲突导致DEADLYSIGNAL
+    class TestOverwriteQuery : public OverwriteQuery {
+    public:
+        explicit TestOverwriteQuery(const QString &filename, QObject *parent = nullptr)
+            : OverwriteQuery(filename, parent) {}
+        void execute() override { /* no-op */ }
+    };
+    TestOverwriteQuery query("", m_tester);
     m_tester->slotQuery(&query);
 }
 
@@ -1157,16 +1162,16 @@ TEST_F(UT_MainWindow, test_handleJobNormalFinished_0010)
 
 TEST_F(UT_MainWindow, test_handleJobNormalFinished_0011)
 {
-//    Stub stub;
-//    CommonStub::stub_QThread_start(stub);
-//    stub.set(ADDR(SettingDialog, isAutoDeleteFile), settingDialog_isAutoDeleteFile_stub);
-//    ArchiveManagerStub::stub_ArchiveManager_updateArchiveComment(stub, true);
-//    ArchiveManagerStub::stub_ArchiveManager_updateArchiveCacheData(stub, true);
-//    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
-//    CustomDialogStub::stub_SimpleQueryDialog_showDialog(stub, 0);
+    Stub stub;
+    CommonStub::stub_QThread_start(stub);
+    stub.set(ADDR(SettingDialog, isAutoDeleteFile), settingDialog_isAutoDeleteFile_stub);
+    ArchiveManagerStub::stub_ArchiveManager_updateArchiveComment(stub, true);
+    ArchiveManagerStub::stub_ArchiveManager_updateArchiveCacheData(stub, true);
+    CustomDialogStub::stub_TipDialog_showDialog(stub, 0);
+    CustomDialogStub::stub_SimpleQueryDialog_showDialog(stub, 0);
 
-//    m_tester->handleJobNormalFinished(ArchiveJob::JT_Convert);
-//    EXPECT_EQ(m_tester->m_ePageID, PI_Success);
+    m_tester->handleJobNormalFinished(ArchiveJob::JT_Convert);
+    EXPECT_EQ(m_tester->m_ePageID, PI_Success);
 }
 
 TEST_F(UT_MainWindow, test_handleJobNormalFinished_0012)
@@ -1381,22 +1386,22 @@ TEST_F(UT_MainWindow, test_resetMainwindow)
 
 TEST_F(UT_MainWindow, test_deleteWhenJobFinish_001)
 {
-//    Stub stub;
-//    QFileInfoStub::stub_QFileInfo_exists(stub, true);
-//    QFileInfoStub::stub_QFileInfo_isDir(stub, true);
-//    m_tester->m_eStartupType = StartupType::ST_Compresstozip7z;
-//    m_tester->m_stCompressParameter.listCompressFiles << "1/";
-//    m_tester->deleteWhenJobFinish(ArchiveJob::JT_Create);
+    Stub stub;
+    QFileInfoStub::stub_QFileInfo_exists(stub, true);
+    QFileInfoStub::stub_QFileInfo_isDir(stub, true);
+    m_tester->m_eStartupType = StartupType::ST_Compresstozip7z;
+    m_tester->m_stCompressParameter.listCompressFiles << "1/";
+    m_tester->deleteWhenJobFinish(ArchiveJob::JT_Create);
 }
 
 TEST_F(UT_MainWindow, test_deleteWhenJobFinish_002)
 {
-//    Stub stub;
-//    QFileInfoStub::stub_QFileInfo_exists(stub, true);
-//    QFileInfoStub::stub_QFileInfo_isDir(stub, false);
-//    m_tester->m_eStartupType = StartupType::ST_Compresstozip7z;
-//    m_tester->m_stCompressParameter.listCompressFiles << "1.txt";
-//    m_tester->deleteWhenJobFinish(ArchiveJob::JT_Create);
+    Stub stub;
+    QFileInfoStub::stub_QFileInfo_exists(stub, true);
+    QFileInfoStub::stub_QFileInfo_isDir(stub, false);
+    m_tester->m_eStartupType = StartupType::ST_Compresstozip7z;
+    m_tester->m_stCompressParameter.listCompressFiles << "1.txt";
+    m_tester->deleteWhenJobFinish(ArchiveJob::JT_Create);
 }
 
 TEST_F(UT_MainWindow, test_deleteWhenJobFinish_003)
@@ -1534,6 +1539,7 @@ TEST_F(UT_MainWindow, test_showErrorMessage_012)
 
 TEST_F(UT_MainWindow, test_showErrorMessage_013)
 {
+    m_tester->m_fileWriteErrorName = "testfile.txt";
     m_tester->showErrorMessage(FI_Uncompress, EI_CreatFileFailed);
     EXPECT_EQ(m_tester->m_pFailurePage->m_pDetailLbl->text().contains("Failed to create"), true);
 }
@@ -1553,13 +1559,6 @@ TEST_F(UT_MainWindow, test_showErrorMessage_015)
 TEST_F(UT_MainWindow, test_getConfigWinSize)
 {
     EXPECT_NE(m_tester->getConfigWinSize().width(), 0);
-}
-
-TEST_F(UT_MainWindow, testsaveConfigWinSize)
-{
-    m_tester->saveConfigWinSize(800, 600);
-    EXPECT_EQ(m_tester->m_pSettings->value(MAINWINDOW_WIDTH_NAME).toInt(), 800);
-    EXPECT_EQ(m_tester->m_pSettings->value(MAINWINDOW_HEIGHT_NAME).toInt(), 600);
 }
 
 TEST_F(UT_MainWindow, test_convertArchive)

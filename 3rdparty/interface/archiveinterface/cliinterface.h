@@ -98,6 +98,9 @@ public:
 
     // ReadWriteArchiveInterface interface
 public:
+    /**
+     * @brief note:在mtp中压缩的时候，需要先建立一个临时目录，在该临时目录中压缩，压缩完毕后move到正确的位置
+     */
     PluginFinishType addFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
     PluginFinishType moveFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
     PluginFinishType copyFiles(const QList<FileEntry> &files, const CompressOptions &options) override;
@@ -175,10 +178,11 @@ protected:
      * @return
      */
     QString getTargetPath();
-	    /**
+
+    /**
      * @brief extractFiles 业务解压
      */
-    PluginFinishType extractFiles(const QList<FileEntry> &files, const ExtractionOptions &options, bool bDlnfs);
+    PluginFinishType extractFiles(const QList<FileEntry> &files, const ExtractionOptions &options, bool bLnfs);
 
 private:
     /**
@@ -189,7 +193,16 @@ private:
      */
     bool moveExtractTempFilesToDest(const QList<FileEntry> &files, const ExtractionOptions &options);
 
+    /**
+     * @brief removeExtractedFilesOnFailure 解压失败时清理已生成的文件（如分卷加密包输错密码时产生的 size 为 0 的文件）
+     * @param strTargetPath 解压目标路径
+     * @param entries 本次解压涉及的条目列表（可为空，为空时从 ArchiveData 获取全部）
+     */
+    void removeExtractedFilesOnFailure(const QString &strTargetPath, const QList<FileEntry> &entries);
+
     bool handleLongNameExtract(const QList<FileEntry> &files);
+
+    bool checkMoveCapability();
 
 private slots:
     /**
@@ -249,6 +262,7 @@ private:
     QMap<QString, int> m_mapLongName;       // 长文件名统计
     QMap<QString, int> m_mapLongDirName;    // 长文件夹统计
     QMap<QString, int> m_mapRealDirValue;    // 真实文件统计
+    QString m_scriptPath; // 脚本路径
 };
 
 #endif // CLIINTERFACE_H

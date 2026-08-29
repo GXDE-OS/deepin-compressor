@@ -19,17 +19,20 @@
 ProgressPage::ProgressPage(QWidget *parent)
     : DWidget(parent)
 {
+    qDebug() << "ProgressPage constructor called";
     initUI();
     initConnections();
+    qDebug() << "ProgressPage initialization completed";
 }
 
 ProgressPage::~ProgressPage()
 {
-
+    qDebug() << "ProgressPage destructor called";
 }
 
 void ProgressPage::setProgressType(Progress_Type eType)
 {
+    qInfo() << "Setting progress type:" << eType;
     m_eType = eType;
     if(PT_Rename == m_eType) {
         m_pPauseContinueButton->setVisible(false);
@@ -58,11 +61,13 @@ void ProgressPage::setProgressType(Progress_Type eType)
 
 void ProgressPage::setTotalSize(qint64 qTotalSize)
 {
+    qDebug() << "Setting total size:" << qTotalSize;
     m_qTotalSize = qTotalSize;
 }
 
 void ProgressPage::setArchiveName(const QString &strArchiveName)
 {
+    qInfo() << "Setting archive name:" << strArchiveName;
     m_strArchiveName = strArchiveName;
     QFileInfo fileinfo(strArchiveName);
 
@@ -78,25 +83,52 @@ void ProgressPage::setArchiveName(const QString &strArchiveName)
 
 QString ProgressPage::archiveName()
 {
+    // qDebug() << "Getting archive name:" << m_strArchiveName;
     return m_strArchiveName;
 }
 
 void ProgressPage::setProgress(double dPercent)
 {
+    // qDebug() << "Setting progress:" << dPercent << "%";
     // 添加对异常进度的判断处理
     if (dPercent > 100) {
+        qWarning() << "Invalid progress percentage:" << dPercent;
         return;
     }
 
-    int iPercent = qRound(dPercent);
-    if (m_iPerent >= iPercent) {
-        return ;
+    if (dPercent < 0) {
+        dPercent = 0;
     }
 
-    m_iPerent = iPercent;
-    m_pProgressBar->setValue(m_iPerent);     // 进度条刷新值
-    m_pProgressBar->update();
+    // Accept sub-percent progress, but keep it monotonic.
+    if (dPercent <= m_dProgressPercent) {
+        qDebug() << "Progress not increased, current:" << m_dProgressPercent << "new:" << dPercent;
+        return;
+    }
+    m_dProgressPercent = dPercent;
 
+    const int iPercent = qMin(100, qRound(dPercent));
+    const bool percentChanged = (iPercent != m_iPerent);
+    if (percentChanged) {
+        m_iPerent = iPercent;
+        m_pProgressBar->setValue(m_iPerent);     // 进度条刷新值
+        m_pProgressBar->update();
+    }
+
+    // 节流：进度可能非常密集（子百分比频繁变化），每次都刷新速度/剩余时间会拖慢任务并造成显示抖动。
+    // 规则：整数进度变化必刷；否则最多每 200ms 刷一次速度/剩余时间。
+    if (!m_uiUpdateTimer.isValid()) {
+        m_uiUpdateTimer.start();
+    }
+    const bool timeToUpdate = (m_uiUpdateTimer.elapsed() >= 200);
+    if (!percentChanged && !timeToUpdate) {
+        return;
+    }
+    if (timeToUpdate) {
+        m_uiUpdateTimer.restart();
+    }
+
+    qDebug() << "Updating progress:" << dPercent << "% (bar" << m_iPerent << "%)";
     // 刷新界面显示
     double dSpeed = 0.0;
     qint64 qRemainingTime = 0;
@@ -109,6 +141,7 @@ void ProgressPage::setProgress(double dPercent)
 
 void ProgressPage::setCurrentFileName(const QString &strFileName)
 {
+    qInfo() << "Setting current file name:" << strFileName;
     QFontMetrics elideFont(m_pFileNameLbl->font());
 
     if (PT_Compress == m_eType || PT_CompressAdd == m_eType) {   // 压缩和追加压缩
@@ -128,6 +161,7 @@ void ProgressPage::setCurrentFileName(const QString &strFileName)
 
 void ProgressPage::resetProgress()
 {
+    qDebug() << "resetProgress";
     // 修复取消按键默认有焦点效果
     m_pCancelBtn->clearFocus();
     m_pPauseContinueButton->clearFocus();
@@ -146,27 +180,39 @@ void ProgressPage::resetProgress()
 
     m_timer.elapsed();
     m_iPerent = 0;
+    m_dProgressPercent = -1.0;
     m_qConsumeTime = 0;
+    if (m_uiUpdateTimer.isValid()) {
+        m_uiUpdateTimer.invalidate();
+    }
 }
 
 void ProgressPage::restartTimer()
 {
+    qDebug() << "restartTimer";
+    m_qConsumeTime = 0;
     m_timer.restart();
+    if (m_uiUpdateTimer.isValid()) {
+        m_uiUpdateTimer.invalidate();
+    }
 }
 
 void ProgressPage::setPushButtonCheckable(bool a, bool b)
 {
+    qDebug() << "setPushButtonCheckable, cancel:" << a << "pause/continue:" << b;
     m_pCancelBtn->setEnabled(a); // 取消按钮
     m_pPauseContinueButton->setEnabled(b); // 暂停继续按钮
 }
 
 bool ProgressPage::isPause()
 {
+    qDebug() << "isPause";
     return m_pPauseContinueButton->text() == tr("Continue", "button");
 }
 
 void ProgressPage::initUI()
 {
+    qDebug() << "initUI";
     // 初始化控件
     m_pPixmapLbl = new DLabel(this);
     m_pArchiveNameLbl = new DLabel(this);
@@ -246,54 +292,74 @@ void ProgressPage::initUI()
 
 void ProgressPage::initConnections()
 {
+    qDebug() << "Initializing progress page connections";
     connect(m_pPauseContinueButton, &DSuggestButton::clicked, this, &ProgressPage::slotPauseClicked);
     connect(m_pCancelBtn, &DPushButton::clicked, this, &ProgressPage::slotCancelClicked);
+    qDebug() << "Progress page connections initialized";
 }
 
 void ProgressPage::calSpeedAndRemainingTime(double &dSpeed, qint64 &qRemainingTime)
 {
-    if (m_qConsumeTime < 0) {
+    qDebug() << "calSpeedAndRemainingTime";
+    // QElapsedTimer 未启动时 elapsed() 会返回 -1，会导致 m_qConsumeTime 变成负数，
+    // 然后速度/剩余时间被重置为 0（你日志里的 warning 就是这个原因）。
+    if (!m_timer.isValid()) {
         m_timer.start();
+        m_qConsumeTime = 0;
     }
 
-    m_qConsumeTime += m_timer.elapsed();
+    const qint64 delta = m_timer.elapsed();
+    if (delta > 0) {
+        m_qConsumeTime += delta;
+    }
 
     if (m_qConsumeTime < 0) {
+        qWarning() << "Consume time is negative, reset speed and remaining time";
         dSpeed = 0.0;
         qRemainingTime = 0;
         return;
     }
 
+    const double p = qBound(0.0, m_dProgressPercent < 0 ? 0.0 : m_dProgressPercent, 100.0);
+
     // 计算速度
     if (0 == m_qConsumeTime) {
+        qWarning() << "Consume time is zero, set speed to 0";
         dSpeed = 0.0; //处理速度
     } else {
         if (PT_Convert == m_eType) {
-            dSpeed = 2 * (m_qTotalSize / 1024.0 * m_iPerent / 100) / m_qConsumeTime * 1000;
+            qDebug() << "Calculate speed for convert type";
+            dSpeed = 2 * (m_qTotalSize / 1024.0 * p / 100) / m_qConsumeTime * 1000;
         } else {
-            dSpeed = (m_qTotalSize / 1024.0 * m_iPerent / 100) / m_qConsumeTime * 1000;
+            qDebug() << "Calculate speed for other types";
+            dSpeed = (m_qTotalSize / 1024.0 * p / 100) / m_qConsumeTime * 1000;
         }
     }
 
     // 计算剩余时间
     double sizeLeft = 0;
     if (PT_Convert == m_eType) {
-        sizeLeft = (m_qTotalSize * 2 / 1024.0) * (100 - m_iPerent) / 100; //剩余大小
+        qDebug() << "Calculate remaining size for convert type";
+        sizeLeft = (m_qTotalSize * 2 / 1024.0) * (100 - p) / 100; //剩余大小
     } else {
-        sizeLeft = (m_qTotalSize / 1024.0) * (100 - m_iPerent) / 100; //剩余大小
+        qDebug() << "Calculate remaining size for other types";
+        sizeLeft = (m_qTotalSize / 1024.0) * (100 - p) / 100; //剩余大小
     }
 
     if (dSpeed != 0.0) {
+        qDebug() << "Calculate remaining time";
         qRemainingTime = qint64(sizeLeft / dSpeed); //剩余时间
     }
 
     if (100 != qRemainingTime && 0 == qRemainingTime) {
+        qDebug() << "Remaining time is 0, set to 1";
         qRemainingTime = 1;
     }
 }
 
 void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
 {
+    qDebug() << "displaySpeedAndTime";
     // 计算剩余需要的小时。
     qint64 hour = qRemainingTime / 3600;
     // 计算剩余的分钟
@@ -309,6 +375,7 @@ void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
     // 设置剩余时间
     m_pRemainingTimeLbl->setText(tr("Time left") + ": " + hh + ":" + mm + ":" + ss);
     if (PT_Compress == m_eType || PT_CompressAdd == m_eType) {
+        qInfo() << "operation type: compress";
         if (dSpeed < 1024) {
             // 速度小于1024k， 显示速度单位为KB/s
             m_pSpeedLbl->setText(tr("Speed", "compress") + ": " + QString::number(dSpeed, 'f', 2) + "KB/s");
@@ -320,18 +387,21 @@ void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
             m_pSpeedLbl->setText(tr("Speed", "compress") + ": " + ">300MB/s");
         }
     } else if (PT_Delete == m_eType) {
+        qInfo() << "operation type: delete";
         if (dSpeed < 1024) {
             m_pSpeedLbl->setText(tr("Speed", "delete") + ": " + QString::number(dSpeed, 'f', 2) + "KB/s");
         } else {
             m_pSpeedLbl->setText(tr("Speed", "delete") + ": " + QString::number((dSpeed / 1024), 'f', 2) + "MB/s");
         }
     } else if (PT_Rename == m_eType) {
+        qInfo() << "operation type: rename";
         if (dSpeed < 1024) {
             m_pSpeedLbl->setText(tr("Speed", "rename") + ": " + QString::number(dSpeed, 'f', 2) + "KB/s");
         } else {
             m_pSpeedLbl->setText(tr("Speed", "rename") + ": " + QString::number((dSpeed / 1024), 'f', 2) + "MB/s");
         }
     } else if (PT_UnCompress == m_eType) {
+        qInfo() << "operation type: uncompress";
         if (dSpeed < 1024) {
             m_pSpeedLbl->setText(tr("Speed", "uncompress") + ": " + QString::number(dSpeed, 'f', 2) + "KB/s");
         } else if (dSpeed > 1024 && dSpeed < 1024 * 300) {
@@ -340,6 +410,7 @@ void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
             m_pSpeedLbl->setText(tr("Speed", "uncompress") + ": " + ">300MB/s");
         }
     } else if (PT_Convert == m_eType) {
+        qInfo() << "operation type: convert";
         if (dSpeed < 1024) {
             m_pSpeedLbl->setText(tr("Speed", "convert") + ": " + QString::number(dSpeed, 'f', 2) + "KB/s");
         } else if (dSpeed > 1024 && dSpeed < 1024 * 300) {
@@ -348,6 +419,7 @@ void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
             m_pSpeedLbl->setText(tr("Speed", "convert") + ": " + ">300MB/s");
         }
     } else if (PT_Comment == m_eType) {
+        qInfo() << "operation type: comment";
         m_pSpeedLbl->setText("");
         m_pRemainingTimeLbl->setText("");
     }
@@ -355,12 +427,15 @@ void ProgressPage::displaySpeedAndTime(double dSpeed, qint64 qRemainingTime)
 
 void ProgressPage::slotPauseClicked(bool bChecked)
 {
+    qInfo() << "Pause/continue button clicked, checked:" << bChecked;
     if (bChecked) {
         // 暂停操作
+        qInfo() << "Pause operation requested";
         m_pPauseContinueButton->setText(tr("Continue", "button"));
         emit signalPause();
     } else {
         // 继续操作
+        qInfo() << "Continue operation requested";
         m_pPauseContinueButton->setText(tr("Pause", "button"));
         emit signalContinue();
     }
@@ -368,23 +443,30 @@ void ProgressPage::slotPauseClicked(bool bChecked)
 
 void ProgressPage::slotCancelClicked()
 {
+    qInfo() << "Cancel button clicked, operation type:" << m_eType;
     // 若不是暂停状态，先暂停
     bool CheckedFlag = m_pPauseContinueButton->isChecked();
     if (!CheckedFlag) { // 原来是运行状态
+        qDebug() << "Pausing operation before cancel";
         emit m_pPauseContinueButton->clicked(true);
     }
 
     // 对话框文字描述
     QString strDesText;
     if (PT_Compress == m_eType) {
+        qInfo() << "operation type: compress";
         strDesText = tr("Are you sure you want to stop the compression?");      // 是否停止压缩
     } else if (PT_UnCompress == m_eType) {
+        qInfo() << "operation type: uncompress";
         strDesText = tr("Are you sure you want to stop the decompression?");      // 是否停止解压
     } else if (PT_Delete == m_eType) {
+        qInfo() << "operation type: delete";
         strDesText = tr("Are you sure you want to stop the deletion?");      // 是否停止删除
     } else if (PT_CompressAdd == m_eType) {
+        qInfo() << "operation type: compress add";
         strDesText = tr("Are you sure you want to stop the compression?");      // 是否停止追加
     } else if (PT_Convert == m_eType) {
+        qInfo() << "operation type: convert";
         strDesText = tr("Are you sure you want to stop the conversion?");      // 是否停止转换
     }
 
@@ -393,10 +475,13 @@ void ProgressPage::slotCancelClicked()
     int iResult = dialog.showDialog(strDesText, tr("Cancel", "button"), DDialog::ButtonNormal, tr("Confirm", "button"), DDialog::ButtonRecommend);
     if (1 == iResult) {
         // 取消操作
+        qInfo() << "User confirmed cancel operation";
         emit signalCancel();
     } else {
         // 恢复原来状态
+        qInfo() << "User canceled the cancel operation";
         if (!CheckedFlag) { // 原来是运行状态
+            qDebug() << "Resuming operation after cancel";
             emit m_pPauseContinueButton->clicked(false);
         }
     }

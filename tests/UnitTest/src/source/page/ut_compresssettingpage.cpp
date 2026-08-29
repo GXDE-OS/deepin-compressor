@@ -9,7 +9,7 @@
 
 #include "gtest/src/stub.h"
 
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 
 #include <gtest/gtest.h>
 #include <QTest>
@@ -77,7 +77,11 @@ TEST_F(UT_TypeLabel, initTest)
 TEST_F(UT_TypeLabel, test_mousePressEvent)
 {
     QTest::mousePress(m_tester, Qt::LeftButton);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QMouseEvent *event = new QMouseEvent(QEvent::MouseButtonPress, QPointF(50, 50), QPointF(50, 50), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#else
     QMouseEvent *event = new QMouseEvent(QEvent::MouseButtonPress, QPointF(50, 50), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#endif
     m_tester->mousePressEvent(event);
     delete event;
 }
@@ -456,7 +460,7 @@ TEST_F(UT_CompressSettingPage, test_slotFileNameChanged_001)
     m_tester->m_pFileNameEdt->setText("");
     m_tester->slotRefreshFileNameEdit();
     EXPECT_EQ(m_tester->m_pFileNameEdt->text(), "");
-    DPalette plt = DApplicationHelper::instance()->palette(m_tester->m_pFileNameEdt);
+    DPalette plt = DPaletteHelper::instance()->palette(m_tester->m_pFileNameEdt);
     EXPECT_EQ(plt.brush(DPalette::Text).color(), plt.color(DPalette::WindowText));
 }
 
@@ -467,7 +471,7 @@ TEST_F(UT_CompressSettingPage, test_slotFileNameChanged_002)
     stub.set(ADDR(CompressSettingPage, checkFileNameVaild), checkFileNameVaild_stub);
     m_tester->m_pFileNameEdt->setText("hh");
     m_tester->slotRefreshFileNameEdit();
-    DPalette plt = DApplicationHelper::instance()->palette(m_tester->m_pFileNameEdt);
+    DPalette plt = DPaletteHelper::instance()->palette(m_tester->m_pFileNameEdt);
     EXPECT_EQ(plt.brush(DPalette::Text).color(), plt.color(DPalette::TextWarning));
 }
 
@@ -478,7 +482,7 @@ TEST_F(UT_CompressSettingPage, test_slotFileNameChanged_003)
     stub.set(ADDR(CompressSettingPage, checkFileNameVaild), checkFileNameVaild_stub);
     m_tester->m_pFileNameEdt->setText("hh");
     m_tester->slotRefreshFileNameEdit();
-    DPalette plt = DApplicationHelper::instance()->palette(m_tester->m_pFileNameEdt);
+    DPalette plt = DPaletteHelper::instance()->palette(m_tester->m_pFileNameEdt);
     EXPECT_EQ(plt.brush(DPalette::Text).color(), plt.color(DPalette::WindowText));
 }
 

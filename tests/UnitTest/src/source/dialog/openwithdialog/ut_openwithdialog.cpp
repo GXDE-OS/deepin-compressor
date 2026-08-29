@@ -71,7 +71,11 @@ TEST_F(UT_OpenWithDialogListItem, test_resizeEvent)
 
 TEST_F(UT_OpenWithDialogListItem, test_enterEvent)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QEvent *e = new QEvent(QEvent::Enter);
+#else
+    QEnterEvent *e = new QEnterEvent(QPoint(0, 0), QPoint(0, 0), QPoint(0, 0));
+#endif
     m_tester->enterEvent(e);
     delete e;
 }
@@ -154,11 +158,19 @@ TEST_F(UT_OpenWithDialog, test_eventFilter)
 {
     OpenWithDialogListItem *item = new OpenWithDialogListItem(QIcon(), "", m_tester);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QMouseEvent *event = new QMouseEvent(QEvent::MouseMove, QPointF(0, 0), QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#else
     QMouseEvent *event = new QMouseEvent(QEvent::MouseMove, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#endif
     m_tester->eventFilter(item, event);
     delete event;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    event = new QMouseEvent(QEvent::MouseButtonPress, QPointF(0, 0), QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#else
     event = new QMouseEvent(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+#endif
     m_tester->eventFilter(item, event);
     delete event;
 }

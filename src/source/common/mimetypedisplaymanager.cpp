@@ -20,12 +20,15 @@ QStringList MimeTypeDisplayManager::BackupMimeTypes;
 
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent) : QObject(parent)
 {
+    qDebug() << "Initializing MimeTypeDisplayManager";
     initData();
     initConnect();
+    qDebug() << "MimeTypeDisplayManager initialized";
 }
 
 void MimeTypeDisplayManager::initData()
 {
+    qDebug() << "Initializing MIME type display data";
     m_displayNames[FileType::Directory] = tr("Directory");
     m_displayNames[FileType::DesktopApplication] = tr("Application");
     m_displayNames[FileType::Videos] = tr("Video");
@@ -53,46 +56,60 @@ void MimeTypeDisplayManager::initData()
 
 void MimeTypeDisplayManager::initConnect()
 {
-
+    qDebug() << "Initializing connections";
 }
 
 QString MimeTypeDisplayManager::displayName(const QString &mimeType)
 {
+    qDebug() << "Getting display name for MIME type:" << mimeType;
     return m_displayNames.value(displayNameToEnum(mimeType));
 }
 
 FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
 {
+    qDebug() << "Converting MIME type to enum:" << mimeType;
     if (mimeType == "application/x-desktop") {
+        qDebug() << "Identified as DesktopApplication";
         return FileType::DesktopApplication;
     } else if (mimeType == "inode/directory") {
+        qDebug() << "Identified as Directory";
         return FileType::Directory;
     } else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Executable";
         return FileType::Executable;
     } else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Video";
         return FileType::Videos;
     } else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Audio";
         return FileType::Audios;
     } else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Image";
         return FileType::Images;
     } else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Document";
         return FileType::Documents;
     } else if (ArchiveMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Archive";
         return FileType::Archives;
     } else if (BackupMimeTypes.contains(mimeType)) {
+        qDebug() << "Identified as Backup";
         return FileType::Backups;
     } else {
+        qDebug() << "Identified as Unknown type";
         return FileType::Unknown;
     }
 }
 
 QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
 {
+    qDebug() << "Getting default icon for MIME type:" << mimeType;
     return m_defaultIconNames.value(displayNameToEnum(mimeType));
 }
 
 QMap<FileType, QString> MimeTypeDisplayManager::displayNames()
 {
+    qDebug() << "Getting all display names";
     return m_displayNames;
 }
 
@@ -101,8 +118,10 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
     QStringList result;
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file:" << path;
         return result;
     }
+    qDebug() << "Reading MIME types from:" << path;
 
     QTextStream in(&file);
     while (!in.atEnd()) {
@@ -110,6 +129,7 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
         QString line = in.readLine();
         // Skip empty line or line with invalid format
         if (line.trimmed().isEmpty()) {
+            qDebug() << "Skipping empty line";
             continue;
         }
 
@@ -117,11 +137,13 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
     }
 
     file.close();
+    qDebug() << "Read" << result.size() << "MIME types from file";
     return result;
 }
 
 void MimeTypeDisplayManager::loadSupportMimeTypes()
 {
+    qDebug() << "Loading supported MIME types";
     QString textPath = QString("%1/%2").arg(MIMETYPE_PATH, "text.mimetype");
     QString archivePath = QString("%1/%2").arg(MIMETYPE_PATH, "archive.mimetype");
     QString videoPath = QString("%1/%2").arg(MIMETYPE_PATH, "video.mimetype");
@@ -136,14 +158,25 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     ImageMimeTypes = readlines(imagePath);
     ExecutableMimeTypes = readlines(executablePath);
     BackupMimeTypes = readlines(backupPath);
+
+    qDebug() << "Supported MIME types loaded:"
+             << "Archive:" << ArchiveMimeTypes.size()
+             << "Text:" << TextMimeTypes.size()
+             << "Video:" << VideoMimeTypes.size()
+             << "Audio:" << AudioMimeTypes.size()
+             << "Image:" << ImageMimeTypes.size()
+             << "Executable:" << ExecutableMimeTypes.size()
+             << "Backup:" << BackupMimeTypes.size();
 }
 
 QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
 {
+    qDebug() << "Getting supported archive MIME types, count:" << ArchiveMimeTypes.size();
     return ArchiveMimeTypes;
 }
 
 QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
 {
+    qDebug() << "Getting supported video MIME types, count:" << VideoMimeTypes.size();
     return VideoMimeTypes;
 }

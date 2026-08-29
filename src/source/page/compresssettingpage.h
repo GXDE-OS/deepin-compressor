@@ -77,6 +77,12 @@ public:
     QString getComment() const;
 
     /**
+     * @brief 是否定制模式
+     * @return
+     */
+    bool isOrderMode();
+
+    /**
      * @brief eventFilter 事件过滤，处理键盘事件等
      * @param watched
      * @param event
@@ -84,6 +90,12 @@ public:
      */
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+protected:
+    /**
+     * @brief mousePressEvent 鼠标点击事件，点击空白区域取消输入框焦点
+     * @param event
+     */
+    void mousePressEvent(QMouseEvent *event) override;
 private:
     /**
      * @brief initUI    初始化界面
@@ -160,6 +172,11 @@ private:
     int showWarningDialog(const QString &msg, const QString &strToolTip = "");
 
     void setDefaultName(const QString &strName);
+    /**
+     * @brief initConfig 初始化配置
+     * @return
+     */
+    void initConfig();
 
 signals:
     void signalCompressClicked(const QVariant &val);
@@ -253,6 +270,8 @@ private:
     QString m_strMimeType;  // 压缩类型（application/x-tar）
 
     QScrollArea *m_pRightScroll = nullptr;
+    void *m_dconfig = nullptr; //读取dconfig配置
+    bool m_isOrderMode = false;    //是否定制模式存储压缩方式优先
 };
 
 #endif // COMPRESSSETTINGPAGE_H

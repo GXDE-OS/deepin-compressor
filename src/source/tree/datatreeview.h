@@ -12,7 +12,10 @@
 
 #include <QStyledItemDelegate>
 #include <QDir>
+#include <QPoint>
 #include <QTime>
+
+#include <QEvent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -49,6 +52,9 @@ public:
     void resetLevel();
 
     TreeHeaderView *getHeaderView() const;
+    void setMapOrderJson(const QString &sJson);
+
+    QVariantMap mapOrderJson();
 
 protected:
     void drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const override;
@@ -75,6 +81,7 @@ protected:
 
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void leaveEvent(QEvent *event) override;
     /**
      * @brief keyPressEvent 键盘事件 delete、enter、Alt+M
      * @param event
@@ -104,6 +111,7 @@ protected:
      * @brief resizeColumnWidth 重置列宽度
      */
     void resizeColumnWidth();
+    void updateHoverRowFromPosition(const QPoint &pos);
 
 Q_SIGNALS:
     /**
@@ -148,10 +156,11 @@ protected:
     QPointF m_lastTouchBeginPos; // 触摸屏点击位置
     bool m_isPressed = false; // 触摸按下标志  true: 按下; false: 松开
     QTime m_lastTouchTime;
-
+    QVariantMap m_mapOrderJson;
 private:
     Qt::FocusReason m_reson;
     QItemSelectionModel *m_selectionModel =  nullptr;
+    int m_hoverRow = -1;
 
 };
 

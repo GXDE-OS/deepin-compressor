@@ -8,7 +8,7 @@
 #include "uitools.h"
 
 #include <DPushButton>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 #include <DSettingsWidgetFactory>
 #include <DFileDialog>
 #include <DLabel>
@@ -24,81 +24,104 @@ DGUI_USE_NAMESPACE
 SettingDialog::SettingDialog(QWidget *parent):
     DSettingsDialog(parent)
 {
+    qDebug() << "Creating SettingDialog";
     initUI();
     initConnections();
+    qDebug() << "SettingDialog initialized";
 }
 
 SettingDialog::~SettingDialog()
 {
+    qDebug() << "Destroying SettingDialog";
     SAFE_DELETE_ELE(m_settings);
+    qDebug() << "SettingDialog destroyed";
 }
 
 QString SettingDialog::getDefaultExtractPath()
 {
+    qDebug() << "Getting default extract path:" << m_curpath;
     return m_curpath;
 }
 
 bool SettingDialog::isAutoCreatDir()
 {
     // 读取配置文件信息 是否自动创建文件夹
-    return m_settings->value("base.decompress.create_folder").toBool();
+    bool autoCreate = m_settings->value("base.decompress.create_folder").toBool();
+    qDebug() << "Auto create folder setting:" << autoCreate;
+    return autoCreate;
 }
 
 bool SettingDialog::isAutoOpen()
 {
     // 读取配置文件信息 是否自动打开文件夹
-    return m_settings->value("base.decompress.open_folder").toBool();
+    bool autoOpen = m_settings->value("base.decompress.open_folder").toBool();
+    qDebug() << "Auto open folder setting:" << autoOpen;
+    return autoOpen;
 }
 
 bool SettingDialog::isAutoDeleteFile()
 {
     // 读取配置文件信息 压缩后是否删除源文件
-    return m_settings->value("base.file_management.delete_file").toBool();
+    bool autoDelete = m_settings->value("base.file_management.delete_file").toBool();
+    qDebug() << "Auto delete file after compression:" << autoDelete;
+    return autoDelete;
 }
 
 QString SettingDialog::isAutoDeleteArchive()
 {
     // 读取配置文件信息 解压后是否删除压缩文件
-    return m_deleteArchiveOption->value().toString();
+    QString deleteOption = m_deleteArchiveOption->value().toString();
+    qDebug() << "Delete archive after extraction option:" << deleteOption;
+    return deleteOption;
 }
 
 bool SettingDialog::isAssociatedType(QString mime) // 暂时未被调用
 {
     // 读取配置文件信息 是否是解压缩关联文件类型
-    return m_settings->option("file_association.file_association_type." + mime.remove("application/"))->value().toBool();
+    QString key = "file_association.file_association_type." + mime.remove("application/");
+    bool isAssociated = m_settings->option(key)->value().toBool();
+    qDebug() << "File association for" << mime << ":" << isAssociated;
+    return isAssociated;
 }
 
 void SettingDialog::initUI()
 {
+    qDebug() << "Initializing SettingDialog UI";
     createSettingButton(); // 创建选择按钮
     createPathBox(); // 创建默认解压路径
     createDeleteBox(); // 创建删除选项
 
     // 通过json文件创建DSettings对象
     m_settings = DSettings::fromJsonFile(":assets/data/deepin-compressor.json");
+    qDebug() << "Settings loaded from JSON file";
 
     const QString confDir = DStandardPaths::writableLocation(QStandardPaths::AppConfigLocation); // 换了枚举值，待验证
-
     const QString confPath = confDir + QDir::separator() + "deepin-compressor.conf";
+    qDebug() << "Config path:" << confPath;
 
     // 创建设置项存储后端
     auto backend = new QSettingBackend(confPath, this);
     m_settings->setBackend(backend);
+    qDebug() << "Settings backend initialized";
 
     // 通过DSettings对象构建设置界面
     updateSettings(m_settings);
+    qDebug() << "Settings UI updated";
 
     writeConfbf();  // 在应用被打开的时候，写新的config文件 具体功能待验证
+    qDebug() << "Initial config file written";
 }
 
 void SettingDialog::initConnections()
 {
+    qDebug() << "Initializing SettingDialog connections";
     //m_setting需要setBackend,该信号才会有效
     connect(m_settings, &DSettings::valueChanged, this, &SettingDialog::slotSettingsChanged);
 }
 
 void SettingDialog::createSettingButton()
 {
+    qDebug() << "Creating custom setting button";
     this->widgetFactory()->registerWidget("custom-button", [this](QObject * obj) -> QWidget* {
         m_customButtonOption = qobject_cast<DSettingsOption *>(obj);
         if (m_customButtonOption)
@@ -132,6 +155,7 @@ void SettingDialog::createSettingButton()
 
 void SettingDialog::createPathBox()
 {
+    qDebug() << "Creating path box";
     this->widgetFactory()->registerWidget("pathbox", [this](QObject * obj) -> QWidget* {
         m_extractPathOption = qobject_cast<DSettingsOption *>(obj);
         if (m_extractPathOption)
@@ -219,7 +243,7 @@ void SettingDialog::createPathBox()
                 {
                     m_curpath = combobox->currentText();
                     QDir dir(m_curpath);
-                    DPalette plt = DApplicationHelper::instance()->palette(combobox);
+                    DPalette plt = DPaletteHelper::instance()->palette(combobox);
 
                     if (!dir.exists()) {
                         plt.setBrush(DPalette::Text, plt.color(DPalette::TextWarning));
@@ -244,6 +268,7 @@ void SettingDialog::createPathBox()
 
 void SettingDialog::createDeleteBox()
 {
+    qDebug() << "Creating delete box";
     this->widgetFactory()->registerWidget("deletebox", [this](QObject * obj) -> QWidget* {
         m_deleteArchiveOption = qobject_cast<DSettingsOption *>(obj);
         if (m_deleteArchiveOption)
@@ -296,7 +321,10 @@ void SettingDialog::createDeleteBox()
 
                 m_deleteArchiveOption->setValue(m_autoDeleteArchive);
             });
-
+            if(parent()&&parent()->property(ORDER_JSON).isValid()) {
+                combobox->setCurrentIndex(0);
+                combobox->setEnabled(false);
+            }
             return widget;
         }
 
@@ -306,6 +334,7 @@ void SettingDialog::createDeleteBox()
 
 void SettingDialog::writeConfbf()
 {
+    qDebug() << "Writing configuration to file";
     // 设置配置文件的绝对路径
     const QString confDir = DStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     const QString confPath = confDir + QDir::separator() + "deepin-compressor.confbf";
@@ -315,10 +344,12 @@ void SettingDialog::writeConfbf()
     file.open(QIODevice::WriteOnly | QIODevice::Text);
 
     // 写配置
+    qDebug() << "Writing configuration to file:" << confPath;
     foreach (QString key, UiTools::m_associtionlist) {
         QString bValue = m_settings->option(key)->value().toString();
         QString content = key + ":" + bValue + "\n";
         file.write(content.toUtf8());
+        qDebug() << "Config entry:" << key << "=" << bValue;
     }
 
     file.close();
@@ -326,34 +357,44 @@ void SettingDialog::writeConfbf()
 
 void SettingDialog::slotSettingsChanged(const QString &key, const QVariant &value)
 {
+    qDebug() << "Setting changed - Key:" << key << "Value:" << value;
     // 设置界面点击恢复默认选项  具体功能待确认、完善
     qInfo() << "slotSettingsChanged:  " << key  << value;
     writeConfbf();
+    qDebug() << "Config file updated after setting change";
 }
 
 void SettingDialog::slotClickSelectAllButton()
 {
+    qDebug() << "Select All button clicked";
     foreach (QString key, UiTools::m_associtionlist) {
         m_settings->setOption(key, true);
     }
+    qDebug() << "All file associations selected";
 }
 
 void SettingDialog::slotClickCancelSelectAllButton()
 {
+    qDebug() << "Cancel Select All button clicked";
     foreach (QString key, UiTools::m_associtionlist) {
         m_settings->setOption(key, false);
     }
+    qDebug() << "All file associations deselected";
 }
 
 void SettingDialog::slotClickRecommendedButton()
 {
+    qDebug() << "Recommended button clicked";
     foreach (QString key, UiTools::m_associtionlist) {
         if ("file_association.file_association_type.x-iso9660-image" == key
                 || "file_association.file_association_type.x-iso9660-appimage" == key
                 || "file_association.file_association_type.x-source-rpm" == key) {
             m_settings->setOption(key, false);
+            qDebug() << "Excluded association:" << key;
         } else {
             m_settings->setOption(key, true);
+            qDebug() << "Included association:" << key;
         }
     }
+    qDebug() << "Recommended file associations set";
 }

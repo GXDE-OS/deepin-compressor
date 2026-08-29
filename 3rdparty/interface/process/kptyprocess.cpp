@@ -46,6 +46,11 @@ KPtyProcess::KPtyProcess(QObject *parent) :
     d->pty->open();
     connect(this, SIGNAL(stateChanged(QProcess::ProcessState)),
             SLOT(_k_onStateChanged(QProcess::ProcessState)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    setChildProcessModifier([this](){
+        setupChildProcessImpl();
+    });
+#endif
 }
 
 KPtyProcess::KPtyProcess(int ptyMasterFd, QObject *parent) :
@@ -57,6 +62,11 @@ KPtyProcess::KPtyProcess(int ptyMasterFd, QObject *parent) :
     d->pty->open(ptyMasterFd);
     connect(this, SIGNAL(stateChanged(QProcess::ProcessState)),
             SLOT(_k_onStateChanged(QProcess::ProcessState)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    setChildProcessModifier([this](){
+        setupChildProcessImpl();
+    });
+#endif
 }
 
 KPtyProcess::~KPtyProcess()
@@ -119,6 +129,7 @@ KPtyDevice *KPtyProcess::pty() const
     return d->pty;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void KPtyProcess::setupChildProcess()
 {
     Q_D(KPtyProcess);
@@ -140,5 +151,26 @@ void KPtyProcess::setupChildProcess()
 
     KProcess::setupChildProcess();
 }
+#else
+void KPtyProcess::setupChildProcessImpl()
+{
+    Q_D(KPtyProcess);
+
+    d->pty->setCTty();
+
+#if 0
+    if (d->addUtmp)
+        d->pty->login(KUser(KUser::UseRealUserID).loginName().toLocal8Bit().data(), qgetenv("DISPLAY"));
+#endif
+    if (d->ptyChannels & StdinChannel)
+        dup2(d->pty->slaveFd(), 0);
+
+    if (d->ptyChannels & StdoutChannel)
+        dup2(d->pty->slaveFd(), 1);
+
+    if (d->ptyChannels & StderrChannel)
+        dup2(d->pty->slaveFd(), 2);
+}
+#endif
 
 //#include "kptyprocess.moc"

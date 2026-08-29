@@ -1,12 +1,12 @@
-// Copyright (C) 2019 ~ 2020 Uniontech Software Technology Co.,Ltd.
-// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef QUERIES_H
 #define QUERIES_H
 
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DDialog>
 #include <DLabel>
 
@@ -16,8 +16,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-struct NewStr
-{
+struct NewStr {
     QStringList strList;
     QString resultStr;
     int fontHeifht = 0;
@@ -29,17 +28,17 @@ NewStr autoCutText(const QString &text, DLabel *pDesLbl);
  * @brief The OverwriteQuery_Result enum   处理文件已存在时的选项
  */
 enum OverwriteQuery_Result {
-    Result_Cancel = 0,   // 取消
-    Result_Skip = 1,   // 跳过
-    Result_SkipAll = 2,   // 全部跳过
-    Result_Overwrite = 3,   // 替换
-    Result_OverwriteAll = 4,   // 全部替换
-    Result_Readonly = 5   // 以只读方式打开，例如损坏的分卷包
+    Result_Cancel = 0,            // 取消
+    Result_Skip = 1,              // 跳过
+    Result_SkipAll = 2,           // 全部跳过
+    Result_Overwrite = 3,         // 替换
+    Result_OverwriteAll = 4,      // 全部替换
+    Result_Readonly = 5           // 以只读方式打开，例如损坏的分卷包
 };
 
 typedef QHash<QString, QVariant> QueryData;
 
-class CustomDDialog : public DDialog
+class CustomDDialog: public DDialog
 {
     Q_OBJECT
 public:
@@ -186,6 +185,32 @@ private:
     int m_iDialogOldHeight = 0;
 };
 
+// 询问是否解压到自动生成的新目录
+class ExtractToQuery : public Query
+{
+    Q_OBJECT
+public:
+    explicit ExtractToQuery(const QString &filename, const QString &targetName, QObject *parent = nullptr);
+    ~ExtractToQuery() override;
+
+    void execute() override;
+    bool responseCancelled();
+    bool responseAccepted();
+
+    void autoFeed(DLabel *label1, DLabel *label2, CustomDDialog *dialog);
+
+private:
+    void setWidgetColor(QWidget *pWgt, DPalette::ColorRole ct, double alphaF);
+    void setWidgetType(QWidget *pWgt, DPalette::ColorType ct, double alphaF);
+
+private:
+    QString m_strDesText;
+    QString m_strFileName;
+    int m_iLabelOldHeight = 0;
+    int m_iLabelOld1Height = 0;
+    int m_iDialogOldHeight = 0;
+};
+
 // 密码输入框
 class PasswordNeededQuery : public Query
 {
@@ -257,4 +282,4 @@ private:
     int m_iDialogOldHeight = 0;
 };
 
-#endif   // QUERIES_H
+#endif // QUERIES_H

@@ -13,6 +13,16 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#include <QTemporaryFile>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
+#else
+#include <QRegExp>
+#include <QRegExpValidator>
+#endif
+
 #include <linux/limits.h>
 
 #include <KEncodingProber>
@@ -59,7 +69,7 @@
             break;
         default:
             // full-width character, emoji, 常用标点, 拉丁文补充1，天城文补充，CJK符号和标点符号（如：【】）
-            if ((ch.unicode() >= 0xff00 && ch <= 0xffef)
+            if ((ch.unicode() >= 0xff00 && ch.unicode() <= 0xffef)
                     || (ch.unicode() >= 0x2600 && ch.unicode() <= 0x27ff)
                     || (ch.unicode() >= 0x2000 && ch.unicode() <= 0x206f)
                     || (ch.unicode() >= 0x80 && ch.unicode() <= 0xff)
@@ -136,7 +146,13 @@ QByteArray Common::detectEncode(const QByteArray &data, const QString &fileName)
     QString detectedResult;
     float chardetconfidence = 0;
     QString str(data);
-    bool bFlag = str.contains(QRegExp("[\\x4e00-\\x9fa5]+")); //匹配的是中文
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QRegularExpression chineseRegExp("[\\x4e00-\\x9fa5]+");
+#else
+    QRegExp chineseRegExp("[\\x4e00-\\x9fa5]+");
+#endif
+    bool bFlag = str.contains(chineseRegExp); //匹配的是中文
     if (bFlag) {
         QByteArray newData = data;
         newData += "为增加探测率保留的中文";    //手动添加中文字符，避免字符长度太短而导致判断编码错误
@@ -277,7 +293,12 @@ QByteArray Common::textCodecDetect(const QByteArray &data, const QString &fileNa
         QTextStream stream(data);
 
         pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        
         stream.setCodec("latin1");
+#else
+        stream.setEncoding(QStringConverter::Latin1);
+#endif
 
         while (!stream.atEnd()) {
             const QString &_data = stream.readLine();
@@ -418,14 +439,52 @@ QString Common::handleLongNameforPath(const QString &strFilePath, const QString 
      return sDir;
 }
 
-bool Common::isSubpathOfDlnfs(const QString &path)
+bool Common::isSubpathOfLnfs(const QString &path)
 {
-    return findDlnfsPath(path, [](const QString &target, const QString &compare) {
+    return findLnfsPath(path, [](const QString &target, const QString &compare) {
         return target.startsWith(compare);
     });
 }
 
-bool Common::findDlnfsPath(const QString &target, Compare func)
+bool Common::isSupportSeek(QString sFileName)
+{
+    QFileInfo info(sFileName);
+    if(info.exists()) {
+        QFile file(sFileName);
+        if(file.open(QIODevice::ReadOnly)) {
+            if (file.seek(0)) {
+                file.close();
+                return true; // 支持 seek
+            }
+        }
+        file.close();
+    } else {
+        // 指定临时文件的目录
+        QString tempDir = info.absoluteDir().path(); // 替换为你的目录路径
+        QString fileTemplate = tempDir + "/tempfile_XXXXXX"; // 文件名模板
+        // 创建 QTemporaryFile
+        QTemporaryFile tempFile(fileTemplate);
+        tempFile.setAutoRemove(true);
+        // 尝试打开临时文件
+        if (tempFile.open()) {
+            tempFile.write("test\n");
+            tempFile.flush();
+        }
+        tempFile.close();
+        QString sFileName = tempFile.fileName();
+        QFile file(sFileName);
+        if(file.open(QIODevice::ReadOnly)) {
+            if (file.seek(0)) {
+                file.close();
+                return true; // 支持 seek
+            }
+        }
+        file.close();
+    }
+    return false;
+}
+
+bool Common::findLnfsPath(const QString &target, Compare func)
 {
     Q_ASSERT(func);
     libmnt_table *tab { mnt_new_table() };
@@ -447,17 +506,84 @@ bool Common::findDlnfsPath(const QString &target, Compare func)
     while (mnt_table_next_fs(tab, iter, &fs) == 0) {
         if (!fs)
             continue;
-        qInfo() << unifyPath(mnt_fs_get_target(fs));
-        if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
-            QString mpt = unifyPath(mnt_fs_get_target(fs));
-            if (func(unifyPath(target), mpt))
+        const char* fsType = mnt_fs_get_fstype(fs);
+        const char* mountPoint = mnt_fs_get_target(fs);
+
+        if (!mountPoint)
+            continue;
+
+        QString fsTypeStr = fsType ? QString(fsType) : "";
+        QString mountPointStr = unifyPath(mountPoint);
+
+        qInfo() << "Checking filesystem - Type:" << fsTypeStr
+                << "Mount:" << mountPointStr;
+
+        // 检查是否是支持长文件名的文件系统类型
+        bool isLongFileNameFS = (fsTypeStr == "fuse.dlnfs") ||
+                (fsTypeStr == "ulnfs");
+
+        if (isLongFileNameFS) {
+            if (func(unifyPath(target), mountPointStr)) {
                 if (tab) mnt_free_table(tab);
                 if (iter) mnt_free_iter(iter);
                 return true;
+            }
         }
     }
 
     if (tab) mnt_free_table(tab);
     if (iter) mnt_free_iter(iter);
     return false;
+}
+
+
+bool extractPathIsWithinTarget(const QString &extractRoot, const QString &absoluteDestPath)
+{
+    const QFileInfo rootFi(extractRoot);
+    QString rootCanon = rootFi.canonicalFilePath();
+    // 如果 canonical 失败，使用绝对路径作为后备
+    if (rootCanon.isEmpty()) {
+        rootCanon = QDir(extractRoot).absolutePath();
+        if (rootCanon.isEmpty()) {
+            return false;
+        }
+    }
+
+    const QString destAbs = QFileInfo(absoluteDestPath).absoluteFilePath();
+    QString path = destAbs;
+
+    // 向上遍历路径，解析符号链接
+    while (true) {
+        QFileInfo fi(path);
+        if (fi.exists()) {
+            const QString canon = fi.canonicalFilePath();
+            if (canon.isEmpty()) {
+                return false;
+            }
+            // 检查解析后的路径是否在解压目录内
+            if (!canon.startsWith(rootCanon + QDir::separator()) && canon != rootCanon) {
+                return false;
+            }
+            return true;
+        }
+
+        const QString parent = fi.path();
+        if (parent == path || parent.isEmpty()) {
+            break;
+        }
+        path = parent;
+    }
+
+    return rootFi.exists();
+}
+
+bool IsMtpFileOrDirectory(QString path) noexcept {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    const static QRegExp regexp("((/run/user/[0-9]+/gvfs/mtp:)|(/root/.gvfs/mtp:)).+");
+    return regexp.exactMatch(path);
+#else
+    const static QRegularExpression regexp("((/run/user/[0-9]+/gvfs/mtp:)|(/root/.gvfs/mtp:)).+");
+    QRegularExpressionMatch match = regexp.match(path);
+    return match.hasMatch();
+#endif
 }

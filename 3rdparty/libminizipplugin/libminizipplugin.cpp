@@ -250,7 +250,13 @@ bool LibminizipPlugin::handleArchiveData(unzFile zipfile)
     // 全路径
     entry.strFullPath = name;
     // 文件名
-    const QStringList pieces = entry.strFullPath.split(QLatin1Char('/'), QString::SkipEmptyParts);
+    const QStringList pieces = entry.strFullPath.split(QLatin1Char('/'),
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QString::SkipEmptyParts
+        #else
+            Qt::SkipEmptyParts
+        #endif
+        );
     entry.strFileName = pieces.isEmpty() ? QString() : pieces.last();
     // 是否是文件夹
     entry.isDirectory = name.endsWith(QDir::separator());
@@ -266,7 +272,11 @@ bool LibminizipPlugin::handleArchiveData(unzFile zipfile)
     QDateTime datetime;
     datetime.setDate(QDate(int(file_info.tmu_date.tm_year), int(file_info.tmu_date.tm_mon + 1), int(file_info.tmu_date.tm_mday)));
     datetime.setTime(QTime(int(file_info.tmu_date.tm_hour), int(file_info.tmu_date.tm_min), int(file_info.tmu_date.tm_sec)));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     entry.uLastModifiedTime = uint(datetime.toTime_t());
+#else
+    entry.uLastModifiedTime = uint(datetime.toSecsSinceEpoch());
+#endif
 
     handleEntry(entry);
 
@@ -283,9 +293,38 @@ ErrorType LibminizipPlugin::extractEntry(unzFile zipfile, unz_file_info file_inf
         strFileName = strFileName.remove(0, options.strDestination.size());
     }
 
-    emit signalCurFileName(strFileName);        // 发送当前正在解压的文件名
+    // 先统一路径分隔符，避免反斜杠形式的 "../" 绕过后续剥离
+    if (strFileName.contains(QLatin1Char('\\'))) {
+        strFileName = strFileName.replace(QLatin1Char('\\'), QDir::separator());
+    }
 
-    bool bIsDirectory = strFileName.endsWith(QDir::separator());    // 是否为文件夹
+    // 目录条目以分隔符结尾，先记录，避免规范化丢失尾部分隔符
+    const bool bIsDirectory = strFileName.endsWith(QDir::separator());
+
+    // 安全规范化路径：按分隔符拆分后用栈过滤 "." 与 ".."，替代易出错的字符串替换
+    const QStringList pathParts = strFileName.split(QDir::separator(),
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QString::SkipEmptyParts
+        #else
+            Qt::SkipEmptyParts
+        #endif
+        );
+    QStringList safeParts;
+    for (const QString &part : pathParts) {
+        if (part == QLatin1String("..")) {
+            if (!safeParts.isEmpty()) {
+                safeParts.removeLast();
+            }
+        } else if (part != QLatin1String(".")) {
+            safeParts.append(part);
+        }
+    }
+    strFileName = safeParts.join(QDir::separator());
+    if (bIsDirectory && !strFileName.isEmpty() && !strFileName.endsWith(QDir::separator())) {
+        strFileName += QDir::separator();
+    }
+
+    emit signalCurFileName(strFileName);        // 发送当前正在解压的文件名
 
     // 判断解压路径是否存在，不存在则创建文件夹
     if (QDir().exists(options.strTargetPath) == false)
@@ -293,9 +332,22 @@ ErrorType LibminizipPlugin::extractEntry(unzFile zipfile, unz_file_info file_inf
 
     // 解压完整文件名（含路径）
     QString strDestFileName = options.strTargetPath + QDir::separator() + strFileName;
+
+    // 词法包含校验：规范化后最终写入路径必须位于解压目录内，拦截 "../" 路径穿越
+    const QString cleanTargetPath = QDir::cleanPath(QDir(options.strTargetPath).absolutePath());
+    const QString cleanDestPath = QDir::cleanPath(QDir(strDestFileName).absolutePath());
+    if (!cleanDestPath.startsWith(cleanTargetPath + QDir::separator()) &&
+        cleanDestPath != cleanTargetPath) {
+        qInfo() << "Path traversal detected! Rejected path: " << strFileName;
+        return ET_FileWriteError;
+    }
+
     QFile file(strDestFileName);
 
     if (bIsDirectory) {     // 文件夹
+        if (PATH_MAX < QString(strFileName).toLocal8Bit().length())
+            return ET_LongNameError;
+
         QDir dir;
         dir.mkpath(strDestFileName);
     } else {        // 普通文件

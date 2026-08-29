@@ -145,8 +145,11 @@ private:
     Progress_Type m_eType = PT_None;      // 进度类型
     qint64 m_qTotalSize = 0;         // 文件大小kB
     int m_iPerent = 0;      // 进度值
+    /** 最近一次收到的进度 0~100；-1 表示尚未收到有效进度（用于允许首包从 0% 开始） */
+    double m_dProgressPercent = -1.0;
     QElapsedTimer m_timer;  //计时器
     qint64 m_qConsumeTime = 0; //消耗时间
+    QElapsedTimer m_uiUpdateTimer; // UI 刷新节流计时器（避免解压高频进度拖慢）
 
     QString m_strArchiveName;
 };
