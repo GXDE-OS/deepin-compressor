@@ -1,0 +1,48 @@
+# Maintainer: CharOfString <root@charofstring.cc>
+pkgname=deepin-compressor-git
+pkgver=6.5.33
+pkgrel=1
+pkgdesc='Archive manager for GXDE'
+arch=('x86_64' 'aarch64')
+url="https://github.com/GXDE-OS/deepin-compressor"
+license=('GPL-3.0-or-later' 'GPL-2.0-or-later' 'LGPL-3.0-or-later' 'CC-BY-4.0' 'CC0-1.0')
+# 7z、pigz、lzop 由插件调用；与 debian/control 相同，unar/unrar 只在 x86 上依赖
+# 7z, pigz and lzop are run by the plugins; as in debian/control, unar and
+# unrar are only pulled in on x86.
+depends=('dtk6core-git' 'dtk6gui-git' 'dtk6widget-git' 'qt6-base' 'qt6-5compat' 'qt6-svg' 'kcodecs' 'karchive'
+         'libarchive' 'openssl' 'libzip' 'minizip' 'zlib' 'util-linux-libs' 'glib2' '7zip' 'pigz' 'lzop'
+         'hicolor-icon-theme' 'libgcc' 'libstdc++' 'glibc')
+depends_x86_64=('unarchiver' 'unrar')
+makedepends=('git' 'cmake' 'ninja' 'pkgconf' 'qt6-tools' 'deepin-gettext-tools-git' 'udisks2-qt6-git'
+             'gsettings-qt6' 'libsecret' 'poppler')
+# Arch 官方的 deepin-shortcut-viewer 依赖官方 DTK，因此只作为可选依赖
+# Arch's deepin-shortcut-viewer depends on the official DTK, so it is only optional.
+optdepends=('deepin-shortcut-viewer: keyboard shortcut overview')
+provides=('deepin-compressor')
+conflicts=('deepin-compressor' 'gxde-roller-git')
+source=()
+sha512sums=()
+
+# 直接使用 PKGBUILD 所在的 git 仓库作为源码 ・ Build from the git checkout this PKGBUILD lives in.
+_srcroot() {
+  git -C "$startdir" rev-parse --show-toplevel
+}
+
+build() {
+  # 与 debian/rules 相同 ・ Same as debian/rules.
+  cmake -B build -S "$(_srcroot)" -GNinja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_SAFETYTEST_ARG=CMAKE_SAFETYTEST_ARG_OFF \
+    -DAPP_VERSION="$pkgver" \
+    -DVERSION="$pkgver" \
+    -DCOMPRESSOR_PLUGIN_PATH=/usr/lib/deepin-compressor/plugins
+  ninja -C build
+}
+
+package() {
+  DESTDIR="$pkgdir" ninja -C build install
+  # 与 debian/manpages 相同 ・ Same as debian/manpages.
+  install -Dm644 "$(_srcroot)/debian/deepin-compressor.1" "$pkgdir/usr/share/man/man1/deepin-compressor.1"
+}
