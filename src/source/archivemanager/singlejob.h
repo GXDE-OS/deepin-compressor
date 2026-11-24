@@ -222,7 +222,9 @@ class OpenJob: public SingleJob
 {
     Q_OBJECT
 public:
-    explicit OpenJob(const FileEntry &stEntry, const QString &strTempExtractPath, const QString &strProgram, ReadOnlyArchiveInterface *pInterface, QObject *parent = nullptr);
+    explicit OpenJob(const FileEntry &stEntry, const QList<FileEntry> &filesToExtract,
+                     const QString &strTempExtractPath, const QString &strProgram,
+                     ReadOnlyArchiveInterface *pInterface, QObject *parent = nullptr);
     ~OpenJob() override;
 
     /**
@@ -239,6 +241,7 @@ protected Q_SLOTS:
 
 private:
     FileEntry m_stEntry;            // 待打开文件
+    QList<FileEntry> m_files;       // 需要一起解压的文件（连续看图时含同目录图片）
     QString m_strTempExtractPath;   // 临时解压路径
     QString m_strProgram;           // 应用程序
 };

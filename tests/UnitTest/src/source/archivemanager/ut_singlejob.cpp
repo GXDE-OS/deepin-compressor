@@ -361,7 +361,7 @@ public:
     virtual void SetUp()
     {
         m_pInterface = new LibzipPlugin(m_tester, QVariantList());
-        m_tester = new OpenJob(FileEntry(), "", "", m_pInterface, nullptr);
+        m_tester = new OpenJob(FileEntry(), QList<FileEntry>(), "", "", m_pInterface, nullptr);
     }
 
     virtual void TearDown()

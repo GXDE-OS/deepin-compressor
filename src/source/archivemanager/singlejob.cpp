@@ -418,13 +418,19 @@ void RenameJob::doWork()
     }
 }
 
-OpenJob::OpenJob(const FileEntry &stEntry, const QString &strTempExtractPath, const QString &strProgram, ReadOnlyArchiveInterface *pInterface, QObject *parent)
+OpenJob::OpenJob(const FileEntry &stEntry, const QList<FileEntry> &filesToExtract,
+                 const QString &strTempExtractPath, const QString &strProgram,
+                 ReadOnlyArchiveInterface *pInterface, QObject *parent)
     : SingleJob(pInterface, parent)
     , m_stEntry(stEntry)
+    , m_files(filesToExtract)
     , m_strTempExtractPath(strTempExtractPath)
     , m_strProgram(strProgram)
 {
     qDebug() << "OpenJob instance created for file:" << stEntry.strFileName;
+    if (m_files.isEmpty()) {
+        m_files << stEntry;
+    }
     m_eJobType = JT_Open;
     connect(m_pInterface, &ReadOnlyArchiveInterface::signalFinished, this, &OpenJob::slotFinished, Qt::ConnectionType::UniqueConnection);
     connect(m_pInterface, &ReadOnlyArchiveInterface::signalQuery, this, &SingleJob::signalQuery, Qt::ConnectionType::AutoConnection);
@@ -450,9 +456,20 @@ void OpenJob::doWork()
             if (iIndex > 0)
                 options.strDestination = m_stEntry.strFullPath.left(iIndex + 1); // 当前路径截掉最后一级目录(保留'/')
         }
-        options.qSize = m_stEntry.qSize;
 
-        PluginFinishType eType = m_pInterface->extractFiles(QList<FileEntry>() << m_stEntry, options);
+        // 连续看图时一次解压同目录的多张图片，进度按总大小计算
+        // Extract all selected files in one go; progress is based on total size.
+        QList<FileEntry> files = m_files;
+        if (files.isEmpty()) {
+            files << m_stEntry;
+        }
+        qint64 qTotalSize = 0;
+        for (const FileEntry &file : files) {
+            qTotalSize += file.qSize;
+        }
+        options.qSize = qTotalSize > 0 ? qTotalSize : m_stEntry.qSize;
+
+        PluginFinishType eType = m_pInterface->extractFiles(files, options);
         qDebug() << "Open extraction operation completed, result:" << eType;
 
         if (!(m_pInterface->waitForFinished())) {

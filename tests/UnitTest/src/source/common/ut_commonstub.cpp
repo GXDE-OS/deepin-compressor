@@ -964,7 +964,7 @@ bool archiveManager_batchExtractFiles_stub(const QStringList &, const QString &)
     return g_ArchiveManager_batchExtractFiles_result;
 }
 
-bool archiveManager_openFile_stub(const QString &, const FileEntry &, const QString &, const QString &)
+bool archiveManager_openFile_stub(const QString &, const FileEntry &, const QList<FileEntry> &, const QString &, const QString &)
 {
     return g_ArchiveManager_openFile_result;
 }

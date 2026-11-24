@@ -212,14 +212,14 @@ TEST_F(UT_ArchiveManager, test_openFile_001)
     CommonStub::stub_UiTools_createInterface(stub, pInterface);
     JobStub::stub_SingleJob_start(stub);
 
-    EXPECT_EQ(m_tester->openFile("1.zip", FileEntry(), "", ""), true);
+    EXPECT_EQ(m_tester->openFile("1.zip", FileEntry(), QList<FileEntry>(), "", ""), true);
 }
 
 TEST_F(UT_ArchiveManager, test_openFile_002)
 {
     Stub stub;
     CommonStub::stub_UiTools_createInterface(stub, nullptr);
-    EXPECT_EQ(m_tester->openFile("1.zip", FileEntry(), "", ""), false);
+    EXPECT_EQ(m_tester->openFile("1.zip", FileEntry(), QList<FileEntry>(), "", ""), false);
 }
 
 TEST_F(UT_ArchiveManager, test_updateArchiveCacheData_001)

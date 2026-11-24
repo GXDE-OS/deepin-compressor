@@ -327,7 +327,9 @@ bool ArchiveManager::batchExtractFiles(const QStringList &listFiles, const QStri
     return false;
 }
 
-bool ArchiveManager::openFile(const QString &strArchiveFullPath, const FileEntry &stEntry, const QString &strTempExtractPath, const QString &strProgram)
+bool ArchiveManager::openFile(const QString &strArchiveFullPath, const FileEntry &stEntry,
+                              const QList<FileEntry> &filesToExtract,
+                              const QString &strTempExtractPath, const QString &strProgram)
 {
     qDebug() << "Starting openFile operation for archive:" << strArchiveFullPath;
     if (nullptr == m_pInterface) {
@@ -337,7 +339,7 @@ bool ArchiveManager::openFile(const QString &strArchiveFullPath, const FileEntry
 
     if (m_pInterface) {
         qDebug() << "Creating OpenJob";
-        OpenJob *pOpenJob = new OpenJob(stEntry, strTempExtractPath, strProgram, m_pInterface);
+        OpenJob *pOpenJob = new OpenJob(stEntry, filesToExtract, strTempExtractPath, strProgram, m_pInterface);
 
         // 连接槽函数
         connect(pOpenJob, &OpenJob::signalJobFinshed, this, &ArchiveManager::slotJobFinished);

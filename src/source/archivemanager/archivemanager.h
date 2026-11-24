@@ -108,11 +108,14 @@ public:
      * @brief openFile          打开压缩包中文件
      * @param strArchiveFullPath    压缩包全路径
      * @param stEntry           待打开文件数据
-     * @param strTargetPath     临时解压路径
+     * @param filesToExtract    需要一起解压的文件（连续看图时包含同目录图片）
+     * @param strTempExtractPath    临时解压路径
      * @param strProgram        应用程序名
      * @return                      是否调用成功
      */
-    bool openFile(const QString &strArchiveFullPath, const FileEntry &stEntry, const QString &strTempExtractPath, const QString &strProgram);
+    bool openFile(const QString &strArchiveFullPath, const FileEntry &stEntry,
+                  const QList<FileEntry> &filesToExtract,
+                  const QString &strTempExtractPath, const QString &strProgram);
 
     /**
      * @brief updateArchiveCacheData    更新本地压缩包缓存数据

@@ -23,6 +23,7 @@
 #include "ddesktopservicesthread.h"
 #include "openFileWatcher.h"
 #include "mimetypes.h"
+#include "imagepreviewutils.h"
 #include "customwidget.h"
 #include "treeheaderview.h"
 #include "compressview.h"
@@ -3370,7 +3371,25 @@ void MainWindow::slotOpenFile(const FileEntry &entry, const QString &strProgram)
     QString strTempExtractPath = TEMPPATH + QDir::separator() + m_strProcessID + createTempPath();  // 拼接临时路径
     QString strOpenFile =  strTempExtractPath + QDir::separator() + entry.strFileName;     // 临时解压文件全路径
     m_pOpenFileWatcher->setCurOpenFile(strOpenFile);
-    if (ArchiveManager::get_instance()->openFile(strArchiveFullPath, entry, strTempExtractPath, strProgram)) {
+
+    // 连续看图：把点击的图片和压缩包内同目录的图片一起解压到同一个临时目录，
+    // 交给系统看图器打开后即可在同一目录内上一张/下一张连续浏览。
+    // Continuous preview: extract the clicked image together with its
+    // same-directory image siblings into the same temporary directory so the
+    // system viewer can browse the containing folder.
+    QList<FileEntry> filesToExtract;
+    filesToExtract << entry;
+    if (ImagePreviewUtils::isSupportedImagePath(entry.strFullPath)) {
+        const QList<FileEntry> imageSiblings = ImagePreviewUtils::siblingImages(
+                DataManager::get_instance().archiveData().mapFileEntry, entry);
+        if (imageSiblings.size() > 1) {
+            filesToExtract = imageSiblings;
+            qInfo() << "Continuous image preview: extracting" << filesToExtract.size()
+                    << "image(s) from the same directory";
+        }
+    }
+
+    if (ArchiveManager::get_instance()->openFile(strArchiveFullPath, entry, filesToExtract, strTempExtractPath, strProgram)) {
         // 进入打开加载界面
         m_pLoadingPage->setDes(tr("Loading, please wait..."));
         m_pLoadingPage->startLoading();     // 开始加载

@@ -1,3 +1,11 @@
+deepin-compressor (6.5.34) unstable; urgency=medium
+
+  * feat: 压缩包内连续看图：双击包内图片时连同同目录图片一起解压，
+    系统看图器可直接上一张/下一张连续切换
+  * fix: 打开包内文件时按所选文件总大小计算解压进度
+
+ -- shenmo <shenmo@spark-app.store>  Mon, 23 Nov 2026 21:45:03 +0800
+
 deepin-compressor (6.5.33) unstable; urgency=medium
 
   * [skip CI] Translate desktop.ts in pt_BR

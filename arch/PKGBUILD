@@ -1,6 +1,6 @@
 # Maintainer: CharOfString <root@charofstring.cc>
 pkgname=gxde-deepin-compressor
-pkgver=6.5.33
+pkgver=6.5.34
 pkgrel=1
 pkgdesc='Archive manager for GXDE'
 arch=('x86_64' 'aarch64')
